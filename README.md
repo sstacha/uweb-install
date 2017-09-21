@@ -3,24 +3,9 @@ These instructions are intended to get a development environment set up and runn
 
 cd to install directory: ie, ~/dev/projects/spe
 CLONE THIS CODE TO YOUR NEW PROJECT DIRECTORY
-git clone https://github.com/spe-sa/website-install.git django
-
-MYSQL
--------
-INSTALL MYSQL CLIENT for scripts (if you don't already have a client)
-========
-brew install mysql 
-- restart the terminal by choosing Terminal -> Quit from menu bar
-brew services list
-NOTE: for auto startup
-brew services start mysql
-mysql -u root -v
-alter user 'root'@'localhost' identified by 'root';
-exit
-NOTE: if you get a warning or error about upgrading run: sudo mysql_upgrade
+git clone https://github.com/sstacha/uweb-install.git uweb
     
-
-INSTALL CODE (TO BE RUN ONCE) 
+INSTALL DEPENDENCIES (TO BE RUN ONCE) 
 --------
 INSTALL PV (used to give a % complete on the import)
 brew install pv
@@ -35,18 +20,17 @@ brew install pyenv-virtualenv
 NOTE: don't forget to set your bash profile with
 - add to profile: if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
-INSTALL latest 2.x version of python
-pyenv install 2.7.13
-
-[OPTIONALLY] install latest 3.x version of python
-pyenv install 3.6.1
-00.
+install latest 3.x version of python
+pyenv install 3.6.2
 
 SET GLOBAL ENV FOR TERMINAL IF NOT OVERRIDDEN
-pyenv global 2.7.13
+pyenv global 3.6.2
 
-SET VIRTUAL ENV FOR speweb to point to the 2.x version
-pyenv virtualenv 2.7.13 speweb
+SET VIRTUAL ENV FOR speweb to point to the 3.x version
+pyenv virtualenv 3.6.2 uweb
+
+CREATE a GIT PROJECT TO HOLD YOUR FILES
+
 
 LOAD CODE: run ./sync-code.sh  (creates the website folder with all code)
 
