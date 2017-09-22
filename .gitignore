@@ -103,5 +103,11 @@ ENV/
 # idea
 .idea*
 
-# uweb
+# uweb (code up to production; data down to staging since people enter content in production)
+# no secret key checkin so we are secure
 secret.key
+# data will be brought back from production instead no checkin
+db.sqllite3
+# static files and images will be rsynced down from prod so don't go up with code
+/static/
+/images/

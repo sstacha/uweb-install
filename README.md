@@ -8,8 +8,9 @@ cd uweb
 
 INSTALL DEPENDENCIES (TO BE RUN ONCE) 
 --------
-INSTALL PV (used to give a % complete on the import)
-brew install pv
+# pv not needed until database migrations
+# INSTALL PV (used to give a % complete on the import)
+# brew install pv
 
 INSTALL pyenv
 brew install pyenv
@@ -21,7 +22,7 @@ brew install pyenv-virtualenv
 NOTE: don't forget to set your bash profile with
 - add to profile: if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
-install latest 3.x version of python
+INSTALL latest 3.x version of python
 pyenv install 3.6.2
 
 SET GLOBAL ENV FOR TERMINAL IF NOT OVERRIDDEN
@@ -43,29 +44,43 @@ pip install uwsgi
 mkdir website
 cd website
 
+NOTE: if you are restoring from an existing codebase you can skip these 2 steps and instead: git clone git://github.com/youruser/somename.git docroot
 django-admin startproject docroot .
 cp -R ../uweb_files/ docroot/
 
 ./manage.py migrate
 ./manage.py runserver 0.0.0.0:8000
 
-NOTE: should work
+NOTE: should work; test the docroot code
+static file: http://localhost:8000/test.txt
+static page no data: http://localhost:8000/test/
+dynamic page static data: http://localhost:8000/test_static.html
+dynamic page dyanmic data: http://localhost:8000/test.html
+
 <ctrl><c> to stop
 
-CREATE YOUR WEBSITE PROJECT FROM BASE UWEB PROJECT
+CREATE YOUR WEBSITE PROJECT FROM BASE UWEB CMS
 --------
+NOTE: if you already restored previously you obviously don't need to do any of this
+1) Create the remote repository, and get the URL such as git://github.com/youruser/somename.git
+(from website directory)
+2) git init
+3) git add .
+4) git commit -m 'initial commit comment')
+5) git remote add origin [URL From Step 1]
+6) git push -p origin master
 
-
+** IDEA: if I call data.dt directly intercept and return json context for quick web services. config for what dirs to apply since you don't want all data to automatically be a webservice if debug=false do we?
 
 SCRIPTS (TO BE RUN PERIODICALLY) - The first time will set up; later will refresh. RUN EACH ONCE TO START WITH
 --------
 
-sync-code.sh
+sync-code.sh (create to connect to repo and refresh our code, then copy it all except the settings file)
     - clones website if doesn't exist and pulls code
     - simply pulls and merges code if dir exists
     - sync-code.sh -f forces directory removal and does a new clone
         
-sync-db.sh
+sync-db.sh (create to remote scp sqllite.db file from prodcution to our local machine)
     - pulls the latest jenkins backup locally vis scp
     - deletes and recreates the django database from backup files
     
