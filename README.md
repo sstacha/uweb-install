@@ -4,7 +4,8 @@ These instructions are intended to get a development environment set up and runn
 cd to install directory: ie, ~/dev/projects/spe
 CLONE THIS CODE TO YOUR NEW PROJECT DIRECTORY
 git clone https://github.com/sstacha/uweb-install.git uweb
-    
+cd uweb
+
 INSTALL DEPENDENCIES (TO BE RUN ONCE) 
 --------
 INSTALL PV (used to give a % complete on the import)
@@ -29,16 +30,31 @@ pyenv global 3.6.2
 SET VIRTUAL ENV FOR speweb to point to the 3.x version
 pyenv virtualenv 3.6.2 uweb
 
-CREATE a GIT PROJECT TO HOLD YOUR FILES
+SET UWEB DIRECTORY TO USE THE UWEB VIRTUAL ENVIRONMENT
+pyenv local uweb
+NOTE: will create a .python-version file that will automatically set the environment when you cd to this direcotry or below and release when you leave
 
+CREATE AND INSTALL UWEB PROJECT
+--------
+# todo: wrap this in an install script ./install-website.sh (creates the website folder with all code)
+pip install django
+pip install uwsgi
 
-LOAD CODE: run ./sync-code.sh  (creates the website folder with all code)
+mkdir website
+cd website
 
-( from the website directory )
-pyenv local speweb
-NOTE: will create a .pyenv file that will automatically set the environment when you cd to this direcotry or below
-- add to profile: export DJANGO_SETTINGS_MODULE=mainsite.settings.local
-NOTE: if you have other django projects that use the default settings location you may need to comment this or manually execute in the terminal
+django-admin startproject docroot .
+cp -R ../uweb_files/ docroot/
+
+./manage.py migrate
+./manage.py runserver 0.0.0.0:8000
+
+NOTE: should work
+<ctrl><c> to stop
+
+CREATE YOUR WEBSITE PROJECT FROM BASE UWEB PROJECT
+--------
+
 
 
 SCRIPTS (TO BE RUN PERIODICALLY) - The first time will set up; later will refresh. RUN EACH ONCE TO START WITH
