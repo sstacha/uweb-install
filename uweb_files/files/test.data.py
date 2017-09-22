@@ -1,4 +1,4 @@
-# from mainsite.models import Web_Region
+# from myapp.models import Web_Region
 
 context = {'title': 'my static title',
                'description': 'my static description',
