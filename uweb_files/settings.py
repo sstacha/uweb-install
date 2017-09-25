@@ -194,7 +194,7 @@ with open('.secret_key') as file:
 
 # SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
 # note: i believe any error where secret key is not set should raise an error during startup
-print('USING SECRET_KEY=%s' % SECRET_KEY)
+print('USING SECRET_KEY=%s' % str(SECRET_KEY))
 
 
 
