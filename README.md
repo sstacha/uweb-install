@@ -32,8 +32,10 @@ SET VIRTUAL ENV FOR speweb to point to the 3.x version
 pyenv virtualenv 3.6.2 uweb
 
 SET UWEB DIRECTORY TO USE THE UWEB VIRTUAL ENVIRONMENT
+```
 pyenv local uweb
 NOTE: will create a .python-version file that will automatically set the environment when you cd to this direcotry or below and release when you leave
+```
 
 CREATE AND INSTALL UWEB PROJECT
 --------
