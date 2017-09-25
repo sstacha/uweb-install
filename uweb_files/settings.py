@@ -18,6 +18,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
+SECRET_KEY = 'yvox@(^3tuiq%)@=d^%^mc6#ox-smq=l=%_e)j%(ml5o#^qdw$'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -194,6 +196,6 @@ with open('.secret_key') as file:
 # note: i believe any error where secret key is not set should raise an error during startup
 print('USING SECRET_KEY=%s' % SECRET_KEY)
 
-# SECRET_KEY = 'yvox@(^3tuiq%)@=d^%^mc6#ox-smq=l=%_e)j%(ml5o#^qdw$'
+
 
 # ------------------------ UWEB SETTINGS ------------------------------------
