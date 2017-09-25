@@ -3,7 +3,7 @@ These instructions are intended to get a development environment set up and runn
 
 cd to install directory: ie, 
 ``` ShellSession
-cd ~/dev/projects/spe
+cd ~/dev/projects
 ```
 
 CLONE THIS CODE TO YOUR NEW PROJECT DIRECTORY
