@@ -1,10 +1,13 @@
 # uweb-install
 These instructions are intended to get a development environment set up and running for the uweb website project on OSX.  For other OS's please insert instructions later per OS when needed.
 
-cd to install directory: ie, ~/dev/projects/spe
+cd to install directory: ie, 
+``` cd ~/dev/projects/spe ```
 CLONE THIS CODE TO YOUR NEW PROJECT DIRECTORY
-git clone https://github.com/sstacha/uweb-install.git uweb
+``` 
+git clone https://github.com/sstacha/uweb-install.git uweb 
 cd uweb
+```
 
 INSTALL DEPENDENCIES (TO BE RUN ONCE) 
 --------
@@ -15,21 +18,23 @@ INSTALL DEPENDENCIES (TO BE RUN ONCE)
 INSTALL pyenv
 brew install pyenv
 NOTE: don't forget to set your bash profile with
-- add to profile: if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+- add to profile: 
+```if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi```
 
 INSTALL pyenv-virtualenv
-brew install pyenv-virtualenv
+```brew install pyenv-virtualenv```
 NOTE: don't forget to set your bash profile with
-- add to profile: if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+- add to profile: 
+```if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi```
 
 INSTALL latest 3.x version of python
-pyenv install 3.6.2
+```pyenv install 3.6.2```
 
 SET GLOBAL ENV FOR TERMINAL IF NOT OVERRIDDEN
-pyenv global 3.6.2
+```pyenv global 3.6.2```
 
 SET VIRTUAL ENV FOR speweb to point to the 3.x version
-pyenv virtualenv 3.6.2 uweb
+```pyenv virtualenv 3.6.2 uweb```
 
 SET UWEB DIRECTORY TO USE THE UWEB VIRTUAL ENVIRONMENT
 ```
@@ -88,12 +93,13 @@ MANUAL STEPS TILL I CAN GET TO THIS:
 ```
 
 NOTE: should work; test the docroot code
+```
 static file: http://localhost:8000/test.txt
 static page no data: http://localhost:8000/test/
 dynamic page static data: http://localhost:8000/test_static.html
 dynamic page dyanmic data: http://localhost:8000/test.html
-
 <ctrl><c> to stop
+```
 
 CREATE YOUR WEBSITE PROJECT FROM BASE UWEB CMS
 --------
