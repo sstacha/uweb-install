@@ -27,7 +27,7 @@ class Command(BaseCommand):
     def get_secret(self, *args, **options):
         with open('.secret_key') as file:
             # print the current value
-            print ('SECRET_KEY=%s' % file.read())
+            print ('FILE SECRET_KEY=%s' % file.read())
 
     def set_secret(self, *args, **options):
         with open('.secret_key', 'w') as file:
@@ -36,7 +36,8 @@ class Command(BaseCommand):
             # write a new generated value to the file
             file.write(secret_key)
             # print the current value
-            print('SECRET_KEY=%s' % file.read())
+            print('FILE SECRET_KEY=%s' % file.read())
+            print('NOTE: You must restart the server to apply the new secret_key')
 
     def handle(self, *args, **options):
         # self.stdout.write(self.style.SUCCESS("subcommand: " + str(options['subcommand'])))
