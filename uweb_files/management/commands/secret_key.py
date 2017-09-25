@@ -30,7 +30,7 @@ class Command(BaseCommand):
             print ('FILE SECRET_KEY=%s' % file.read())
 
     def set_secret(self, *args, **options):
-        with open('.secret_key', 'w') as file:
+        with open('.secret_key', 'w+') as file:
             # generate a new secret key
             secret_key = self.generate_secret()
             # write a new generated value to the file
