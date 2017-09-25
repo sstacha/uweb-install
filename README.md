@@ -34,11 +34,13 @@ pyenv virtualenv 3.6.2 uweb
 SET UWEB DIRECTORY TO USE THE UWEB VIRTUAL ENVIRONMENT
 ```
 pyenv local uweb
-NOTE: will create a .python-version file that will automatically set the environment when you cd to this direcotry or below and release when you leave
+NOTE: will create a .python-version file
+    that will automatically set the environment when you cd to this direcotry or below and release when you leave
 ```
 
 CREATE AND INSTALL UWEB PROJECT
 --------
+```
 # todo: wrap this in an install script ./install-website.sh (creates the website folder with all code)
 pip install django
 pip install uwsgi
@@ -82,6 +84,8 @@ MANUAL STEPS TILL I CAN GET TO THIS:
 
 ./manage.py migrate
 ./manage.py runserver 0.0.0.0:8000
+
+```
 
 NOTE: should work; test the docroot code
 static file: http://localhost:8000/test.txt
