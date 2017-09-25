@@ -67,15 +67,15 @@ else:
             LOGGING['loggers'][logger]['level'] = 'INFO'
 
 # ----------- secret key handler
-# note: we do not want to start up if we have any problems!
-with open('.secret_key') as file:
-    # print the current value
-    SECRET_KEY = file.read()
-
-# SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
-# note: i believe any error where secret key is not set should raise an error during startup
-print('USING SECRET_KEY=%s' % SECRET_KEY)
-
-# SECRET_KEY = 'yvox@(^3tuiq%)@=d^%^mc6#ox-smq=l=%_e)j%(ml5o#^qdw$'
+try:
+    with open('.secret_key') as file:
+        # SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
+        # note: can not error if no file since then ./manage.py command could not be completed
+        SECRET_KEY = file.read()
+        print('USING SECRET_KEY=%s' % SECRET_KEY)
+except FileNotFoundError:
+    print(".secret_key file was not found!")
+    # todo: figure out how to print as an alert or error not just text
+    print('USING STATIC SECRET_KEY=%s' % SECRET_KEY)
 
 # ------------------------ UWEB SETTINGS ------------------------------------
