@@ -2,42 +2,61 @@
 These instructions are intended to get a development environment set up and running for the uweb website project on OSX.  For other OS's please insert instructions later per OS when needed.
 
 cd to install directory: ie, 
-``` cd ~/dev/projects/spe ```
+``` ShellSession
+cd ~/dev/projects/spe
+```
+
 CLONE THIS CODE TO YOUR NEW PROJECT DIRECTORY
-``` 
+``` ShellSession
 git clone https://github.com/sstacha/uweb-install.git uweb 
 cd uweb
 ```
 
 INSTALL DEPENDENCIES (TO BE RUN ONCE) 
 --------
+``` ShellSession
 # pv not needed until database migrations
 # INSTALL PV (used to give a % complete on the import)
 # brew install pv
+```
 
 INSTALL pyenv
+``` ShellSession
 brew install pyenv
+```
 NOTE: don't forget to set your bash profile with
 - add to profile: 
-```if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi```
+``` ShellSession 
+if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+```
 
 INSTALL pyenv-virtualenv
-```brew install pyenv-virtualenv```
+``` ShellSession
+brew install pyenv-virtualenv
+```
 NOTE: don't forget to set your bash profile with
 - add to profile: 
-```if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi```
+``` ShellSession
+if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+```
 
 INSTALL latest 3.x version of python
-```pyenv install 3.6.2```
+``` ShellSession
+pyenv install 3.6.2
+```
 
 SET GLOBAL ENV FOR TERMINAL IF NOT OVERRIDDEN
-```pyenv global 3.6.2```
+``` ShellSession
+pyenv global 3.6.2
+```
 
 SET VIRTUAL ENV FOR speweb to point to the 3.x version
-```pyenv virtualenv 3.6.2 uweb```
+``` ShellSession
+pyenv virtualenv 3.6.2 uweb
+```
 
 SET UWEB DIRECTORY TO USE THE UWEB VIRTUAL ENVIRONMENT
-```
+``` ShellSession
 pyenv local uweb
 NOTE: will create a .python-version file
     that will automatically set the environment when you cd to this direcotry or below and release when you leave
@@ -45,7 +64,7 @@ NOTE: will create a .python-version file
 
 CREATE AND INSTALL UWEB PROJECT
 --------
-```
+``` ShellSession
 # todo: wrap this in an install script ./install-website.sh (creates the website folder with all code)
 pip install django
 pip install uwsgi
