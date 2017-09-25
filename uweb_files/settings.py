@@ -15,12 +15,8 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'yvox@(^3tuiq%)@=d^%^mc6#ox-smq=l=%_e)j%(ml5o#^qdw$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -120,6 +116,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# ITEMS BETWEEN THESE HEADINGS WILL BE UPDATED
 # ------------------------ UWEB SETTINGS ------------------------------------
 # add our different roots for static files to be served up
 IMAGES_ROOT = os.path.join(BASE_DIR, "images/")
@@ -187,5 +184,16 @@ else:
         if LOGGING['loggers'][logger]['level'] == 'DEBUG':
             LOGGING['loggers'][logger]['level'] = 'INFO'
 
+# ----------- secret key handler
+# note: we do not want to start up if we have any problems!
+with open('.secret_key') as file:
+    # print the current value
+    SECRET_KEY = file.read()
+
+# SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
+# note: i believe any error where secret key is not set should raise an error during startup
+print('USING SECRET_KEY=%s' % SECRET_KEY)
+
+# SECRET_KEY = 'yvox@(^3tuiq%)@=d^%^mc6#ox-smq=l=%_e)j%(ml5o#^qdw$'
 
 # ------------------------ UWEB SETTINGS ------------------------------------
