@@ -66,16 +66,14 @@ else:
         if LOGGING['loggers'][logger]['level'] == 'DEBUG':
             LOGGING['loggers'][logger]['level'] = 'INFO'
 
+# SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
 # ----------- secret key handler
 try:
     with open('.secret_key') as file:
-        # SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
-        # note: can not error if no file since then ./manage.py command could not be completed
         SECRET_KEY = file.read()
-        print('USING SECRET_KEY=%s' % SECRET_KEY)
 except FileNotFoundError:
-    print(".secret_key file was not found!")
-    # todo: figure out how to print as an alert or error not just text
-    print('USING STATIC SECRET_KEY=%s' % SECRET_KEY)
+    print('WARNING: .secret_key NOT FOUND DEFAULTING TO [%s] from config file' % str(SECRET_KEY))
+    print('     it is recommended you run [./manage.py secret_key set] from the console!')
+    print('')
 
 # ------------------------ UWEB SETTINGS ------------------------------------
