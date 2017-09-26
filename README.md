@@ -89,6 +89,8 @@ MANUAL STEPS TILL I CAN GET TO THIS:
         NOTE: if clustered
         - ./manage.py secret_key set on first node
         - ./manage.py secret_key set <secret_key from first node> on other nodes
+    - initialize our .gitignore file (gives you good default settings for a default project that you can modify)
+        - cp ../.gitignore .
 
 ./manage.py migrate
 ./manage.py runserver 0.0.0.0:8000
