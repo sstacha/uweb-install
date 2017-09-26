@@ -109,16 +109,22 @@ dynamic page dyanmic data: http://localhost:8000/test.html
 CREATE YOUR WEBSITE PROJECT FROM BASE UWEB CMS
 --------
 NOTE: if you already restored previously you obviously don't need to do any of this
+``` ShellSession
+NOTE: For this to work you can not create any files (readme or license); make sure it is a blank repo!
+NOTE: recommend naming project website for ease of sync later
 1) Create the remote repository, and get the URL such as git://github.com/youruser/somename.git
-(from website directory)
+(from website directory) 1b - 1c are optional
+1b) rm -rf .git (if you have anything)
+1c) echo "# website" >> README.md
 2) git init
 3) git add .
-4) git commit -m 'initial commit comment')
+4) git commit -m 'initial commit comment'
 5) git remote add origin [URL From Step 1]
-6) git push -p origin master
+6) git push -u origin master
 
 
 ** IDEA: if I call data.dt directly intercept and return json context for quick web services. config for what dirs to apply since you don't want all data to automatically be a webservice if debug=false do we?
+```
 
 SCRIPTS (TO BE RUN PERIODICALLY) - The first time will set up; later will refresh. RUN EACH ONCE TO START WITH
 --------
@@ -138,35 +144,42 @@ sync-files.sh
     
     
 NOTE: DO NOT PLACE THESE IN YOUR PATH.  I am using relative paths and the scripts expect to be run from the scripts folder.
-    
+
+INTEGRATION WITH GITHUB Desktop
+---------------------------------
+GitHub Desktop is a great tool for reviewing and diffing files before committing and pushing changes.  It is relatively straightforward except you have to remember that when you click the plus be sure to change the default setting of clone to add.  Pick the website direcotry and you are good to go.
+
 INTEGRATION WITH IDE
 ----------------------
- - point ide to <home>/.pyenv/speweb/ or .../speweb/
- - point working folder to website/mainsite project folder (<installdir>/website/mainsite)
- - set the settings file (<installdir>/website/mainsite/settings/local)
- - say yes to build from existing sources
+These instructions are for linking your new website project to pycharm.  JetBrains has several great products and I highly recommend them.  The general concepts though should be the same for most tools.
+todo: get some help to create wiki pages for these types of instructions per tool; could also use other os's for above too
+
+ - create new project
+    - select django from left side
+    - then pick the website directory
+    - if <home>/.pyenv/uweb/ or .../uweb/ is not selected pick it 
+    - It will tell you the directory is not empty and ask to build from existing sources; say yes
+ 
+ IT SHOULD DEFAULT EVERYTHING AFTER THAT.  IF NOT:
  - click the wrench or go to project properties
     - under languages and frameworks choose Django
         - enable django support
-        - set project to <install dir>/website (ex: /Users/sstacha/dev/projects/spe/django/website)
-        - set settings to mainsite/settings/local.py
+        - set project to <install dir>/uweb/website (ex: /Users/sstacha/dev/uweb/website)
+        - set settings to docroot/settings.py if it doesn't default
         - should automatically set manage.py for manage script
     - under build, execucution, deployment
         - under Console choose Python Console
-            - set working directory (ex: /Users/sstacha/dev/projects/spe/django/website)
-            - set environment variable DJANGO_SETTINGS_MODULE to mainsite.settings.local
-                - NOTE: should look like this when done: DJANGO_SETTINGS_MODULE=mainsite.settings.local
+            - set working directory (to website)
             - check add source roots to have them autoload
         - under Console choose Django Console
-            - set working direcotry (ex: /Users/sstacha/dev/projects/spe/django/website)
-            - set environment variable DJANGO_SETTINGS_MODULE to mainsite.settings.local
-                - NOTE: should look like this when done: DJANGO_SETTINGS_MODULE=mainsite.settings.local
+            - set working direcotry (to website)
             - check add source roots to have them autoload
- - drop down the empty dropdown and choose run configurations
+ - drop down the empty dropdown and choose run configurations / edit configurations
     - click the + and select django server
-    - name it localhost (or whatever you like)
-    - set working directory
+    - name it website (or whatever you like)
+    - set working directory to website
     - leave everything else default
- - run -> localhost:8000 should show our homepage
+ - run 
+ - open localhost:8000 in browser; should show django default ready for development screen
  
  NOTE: if you see a msg about migrations to apply then open terminal and run ./makemigrations and ./migrate
