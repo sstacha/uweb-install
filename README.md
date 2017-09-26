@@ -179,7 +179,7 @@ todo: get some help to create wiki pages for these types of instructions per too
     - name it website (or whatever you like)
     - set working directory to website
     - leave everything else default
- - run 
+ - click run or debug
  - open localhost:8000 in browser; should show django default ready for development screen
  
  NOTE: if you see a msg about migrations to apply then open terminal and run ./makemigrations and ./migrate
