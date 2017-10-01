@@ -183,3 +183,27 @@ todo: get some help to create wiki pages for these types of instructions per too
  - open localhost:8000 in browser; should show django default ready for development screen
  
  NOTE: if you see a msg about migrations to apply then open terminal and run ./makemigrations and ./migrate
+ 
+INSTALL PRODUCTION 
+--------
+Even personal websites should have a staging or development installation (usually your laptop for new development work) and a production installation (usually an always on machine or hosted server).  I am not going to cover why we want to do this here.  I will put together a video or wiki page to explain that later.  This will only be the steps to get a production server installed and configured.  Essentially, we will be following the same install steps above with the following exceptions:
+
+ - Instead of installing to a directory that makes since on your development machine like <home>/dev/projects we want to install to something that makes sense for a production machine.  
+``` ShellSession
+# instead of cd ~/dev/projects
+cd ~        
+```
+ - Follow all instructions up to and including create and install uweb environment; skip all development integrations since we don't need them
+    - install and configure our production webserver and uwsgi
+``` ShellSession
+# must be run as root or use sudo if you have it configured for your user in production
+# assuming using latest ubuntu
+apt-get update
+apt-get upgrade
+apt-get install nginx uwsgi
+# copy nginx config file: todo insert command here when you do it
+# test through uwsgi: todo insert commands and steps here
+# test thorugh nginx: todo insert commands and steps here
+```
+
+    
