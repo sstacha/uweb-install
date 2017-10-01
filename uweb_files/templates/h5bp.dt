@@ -1,4 +1,5 @@
 <!doctype html>
+{% load static %}
 <html class="no-js" lang="">
     <head>
         <meta charset="utf-8">
@@ -7,12 +8,12 @@
         {# meta info will be added at the page level to deal with multiple title block definitions #}
         {% block meta %}{% endblock %}
 
-        <link rel="apple-touch-icon" href="/h5bp/apple-touch-icon.png">
+        <link rel="apple-touch-icon" href="{%  static "h5bp/apple-touch-icon.png" %}">
         <!-- Place favicon.ico in the root directory -->
 
-        <link rel="stylesheet" href="/h5bp/css/normalize.css">
-        <link rel="stylesheet" href="/h5bp/css/main.css">
-        <script src="/h5bp/js/vendor/modernizr-2.8.3.min.js"></script>
+        <link rel="stylesheet" href="{% static "h5bp/css/normalize.css" %}">
+        <link rel="stylesheet" href="{% static "h5bp/css/main.css" %}">
+        <script src="{% static "h5bp/js/vendor/modernizr-2.8.3.min.js" %}"></script>
 
         {% block layout_css %}{% endblock %}
         {% block css %}{% endblock %}
@@ -29,9 +30,9 @@
 
 
         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-        <script>window.jQuery || document.write('<script src="h5bp/js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
-        <script src="/h5bp/js/plugins.js"></script>
-        <script src="/h5bp/js/main.js"></script>
+        <script>window.jQuery || document.write('<script src="{% static "h5bp/js/vendor/jquery-1.12.0.min.js" %}"><\/script>')</script>
+        <script src="{% static "h5bp/js/plugins.js" %}"></script>
+        <script src="{% static "h5bp/js/main.js" %}"></script>
 
         {% block layout_js %}{% endblock %}
         {% block js %}{% endblock %}
