@@ -193,17 +193,57 @@ Even personal websites should have a staging or development installation (usuall
 # instead of cd ~/dev/projects
 cd ~        
 ```
- - Follow all instructions up to and including create and install uweb environment; skip all development integrations since we don't need them
+- Instructions to install pyenv from post here: https://askubuntu.com/questions/865554/how-do-i-install-python-3-6-using-apt-get
+``` ShellSession
+# base required files
+sudo apt-get install -y build-essential libbz2-dev libssl-dev libreadline-dev libsqlite3-dev tk-dev
+# optional scientific package headers (for Numpy, Matplotlib, SciPy, etc.)
+sudo apt-get install -y libpng-dev libfreetype6-dev
+# optional text based browser for testing
+sudo apt-get install -y lynx
+# run installer
+curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+# add the following lines to your ~.profile or ~.bashrc
+export PATH="~/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"   
+```
+- Follow all instructions up to and including create and install uweb environment; skip all development integrations since we don't need them
     - install and configure our production webserver and uwsgi
 ``` ShellSession
 # must be run as root or use sudo if you have it configured for your user in production
 # assuming using latest ubuntu
-apt-get update
-apt-get upgrade
-apt-get install nginx uwsgi
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install nginx
 # copy nginx config file: todo insert command here when you do it
+sudo cp -f $HOME/uweb/production_files/default /etc/nginx/sites-available/default
+# initialize uwsgi
+sudo mkdir -p /etc/uwsgi/sites
+sudo mkdir -p /run/uwsgi
+sudo chown ubuntu:www-data /run/uwsgi
+sudo chmod g+w /run/uwsgi
+echo "should have created and modified permissions for /run/uwsgi"
+echo "$(ls -al /run/)"
+# copy the uwsgi config in place
+sudo cp -f $HOME/uweb/production_files/uwsgi_uweb.ini /etc/uwsgi/sites/uwsgi_uweb.ini
 # test through uwsgi: todo insert commands and steps here
+sudo uwsgi --http :8080 --chdir $HOME/uweb/website --home $HOME/.pyenv/uweb -w docroot.wsgi
+# note: if something goes wrong to access uwsgi logs:
+sudo journalctl -xe
 # test thorugh nginx: todo insert commands and steps here
+lynx http://localhost
+    
+# set up uwsgi as a service so it loads on startup
+sudo cp -f $HOME/uweb/production_files/uwsgi.service /etc/systemd/system/uwsgi.service
+sudo systemctl enable uwsgi
+sudo systemctl start uwsgi
+sudo systemctl status uwsgi
+# re-start our nginx service and print the status to console to pick up the new config and uwsgi integration
+systemctl stop nginx
+systemctl start nginx
+systemctl status nginx
+NOTE: if problems with uwsgi see original doc here: https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-uwsgi-and-nginx-on-ubuntu-16-04
 ```
 
     
