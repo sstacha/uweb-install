@@ -72,11 +72,13 @@ pip install uwsgi
 mkdir website
 cd website
 
-NOTE: if you are restoring from an existing codebase you can skip these 2 steps and instead: git clone git://github.com/youruser/somename.git docroot
+NOTE: if you are restoring from an existing codebase you can skip these 2 steps and instead: git clone git://github.com/youruser/somename.git .
 django-admin startproject docroot .
 cp -R ../uweb_files/ docroot/
 
 MANUAL STEPS TILL I CAN GET TO THIS:
+
+    - FIRST TIME DEVELOPMENT
     - backup existing file (see uarchvie project): archive -c docroot/settings.py
     - configure our settings file:
         - manually append docroot_settings.py to the bottom of settings.py
@@ -84,16 +86,19 @@ MANUAL STEPS TILL I CAN GET TO THIS:
         - configure ALLOWED_HOSTS:
             - dev: ALLOWED_HOSTS = ['*']
             - prod: ALLOWED_HOSTS = ['<machines to lock it down to>', 'machine2']
+
+    - initialize our .gitignore file (gives you good default settings for a default project that you can modify)
+        - cp ../.gitignore .
+        
+    - FIRST TIME DEVELOPMENT AND SERVER
     - generate our key
         - ./manage.py secret_key set
         NOTE: if clustered
         - ./manage.py secret_key set on first node
         - ./manage.py secret_key set <secret_key from first node> on other nodes
-    - initialize our .gitignore file (gives you good default settings for a default project that you can modify)
-        - cp ../.gitignore .
-
-./manage.py migrate
-./manage.py runserver 0.0.0.0:8000
+        
+    - ./manage.py migrate
+    - ./manage.py runserver 0.0.0.0:8000
 
 ```
 
@@ -184,7 +189,7 @@ todo: get some help to create wiki pages for these types of instructions per too
  
  NOTE: if you see a msg about migrations to apply then open terminal and run ./makemigrations and ./migrate
  
-INSTALL PRODUCTION 
+INSTALL PRODUCTION (ASSUMING UBUNTU SERVER)
 --------
 Even personal websites should have a staging or development installation (usually your laptop for new development work) and a production installation (usually an always on machine or hosted server).  I am not going to cover why we want to do this here.  I will put together a video or wiki page to explain that later.  This will only be the steps to get a production server installed and configured.  Essentially, we will be following the same install steps above with the following exceptions:
 
@@ -206,22 +211,33 @@ curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-
 # add the following lines to your ~.profile or ~.bashrc
 export PATH="~/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"   
+eval "$(pyenv virtualenv-init -)"
+# reload your shell and make sure it works by echo $PATH and searching for .pyenv
 ```
 - Follow all instructions up to and including create and install uweb environment; skip all development integrations since we don't need them
     - install and configure our production webserver and uwsgi
 ``` ShellSession
-# must be run as root or use sudo if you have it configured for your user in production
-# assuming using latest ubuntu
+# assuming you have sudo configured for your user in production to run all commands; google it if not
+# assuming using ubuntu server
+# (optional) but recommended to download my uarchive script (into your home directory)
+# instructions can be found here.  If not you will need to archive files on your own:
+https://github.com/sstacha/uarchive
+# make sure our environment packages are up to date and install the web server
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install nginx
-# copy nginx config file: todo insert command here when you do it
+# archive the current copy of the existing file if it exists
+archive /etc/nginx/sites-available/default
+NOTE: if you didn't download the uarcive project you can just make a copy in case you need to put it back later
+# copy nginx config file: todo insert command here when you do it (replaces anything there!)
 sudo cp -f $HOME/uweb/production_files/default /etc/nginx/sites-available/default
+# if using consolidated storage (variable is set) set the file as current archived version
+archive -c /etc/nginx/sites-available/default
 # initialize uwsgi
 sudo mkdir -p /etc/uwsgi/sites
 sudo mkdir -p /run/uwsgi
-sudo chown ubuntu:www-data /run/uwsgi
+sudo chown <your user>:www-data /run/uwsgi  
+    ex: sudo chown sstacha:www-data /run/uwsgi
 sudo chmod g+w /run/uwsgi
 echo "should have created and modified permissions for /run/uwsgi"
 echo "$(ls -al /run/)"
