@@ -233,33 +233,61 @@ NOTE: if you didn't download the uarcive project you can just make a copy in cas
 sudo cp -f $HOME/uweb/production_files/default /etc/nginx/sites-available/default
 # if using consolidated storage (variable is set) set the file as current archived version
 archive -c /etc/nginx/sites-available/default
-# initialize uwsgi
-sudo mkdir -p /etc/uwsgi/sites
-sudo mkdir -p /run/uwsgi
-sudo chown <your user>:www-data /run/uwsgi  
-    ex: sudo chown sstacha:www-data /run/uwsgi
-sudo chmod g+w /run/uwsgi
-echo "should have created and modified permissions for /run/uwsgi"
-echo "$(ls -al /run/)"
-# copy the uwsgi config in place
-sudo cp -f $HOME/uweb/production_files/uwsgi_uweb.ini /etc/uwsgi/sites/uwsgi_uweb.ini
-# test through uwsgi: todo insert commands and steps here
-sudo uwsgi --http :8080 --chdir $HOME/uweb/website --home $HOME/.pyenv/uweb -w docroot.wsgi
-# note: if something goes wrong to access uwsgi logs:
-sudo journalctl -xe
-# test thorugh nginx: todo insert commands and steps here
-lynx http://localhost
     
-# set up uwsgi as a service so it loads on startup
-sudo cp -f $HOME/uweb/production_files/uwsgi.service /etc/systemd/system/uwsgi.service
-sudo systemctl enable uwsgi
-sudo systemctl start uwsgi
-sudo systemctl status uwsgi
+# NOTE: NOT WORKING! SKIP TO GUNICORN INSTALLATION BELOW    
+        <!-- # initialize uwsgi
+        sudo mkdir -p /etc/uwsgi/sites
+        sudo mkdir -p /run/uwsgi
+        sudo chown <your user>:www-data /run/uwsgi  
+            ex: sudo chown sstacha:www-data /run/uwsgi
+        sudo chmod g+w /run/uwsgi
+        echo "should have created and modified permissions for /run/uwsgi"
+        echo "$(ls -al /run/)"
+        # copy the uwsgi config in place
+        sudo cp -f $HOME/uweb/production_files/uwsgi_uweb.ini /etc/uwsgi/sites/uwsgi_uweb.ini
+        # test through uwsgi: todo insert commands and steps here
+        sudo uwsgi --http :8080 --chdir $HOME/uweb/website --home $HOME/.pyenv/uweb -w docroot.wsgi
+        # note: if something goes wrong to access uwsgi logs:
+        sudo journalctl -xe
+        # test thorugh nginx: todo insert commands and steps here
+        lynx http://localhost     
+        # set up uwsgi as a service so it loads on startup
+        sudo cp -f $HOME/uweb/production_files/uwsgi.service /etc/systemd/system/uwsgi.service
+        sudo systemctl enable uwsgi
+        sudo systemctl start uwsgi
+        sudo systemctl status uwsgi
+        NOTE: if problems with uwsgi see original doc here: https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-uwsgi-and-nginx-on-ubuntu-16-04
+        -->
+    
+NOTE: could not get uwsgi to work on python3 with pyenv on ubuntu server 16.04.  If someone does please send me the instructions.
+NOTE: changing to Gunicorn for now; much easier and shouldn't need much prossessing with this minimalist approach
+# from your website directory uninstall uwsgi if you have it installed
+pip uninstall uwsgi
+# install gunicorn
+pip install gunicorn
+# test that gunicorn install works
+gunicorn docroot.wsgi
+    open a new shell window and ssh back into the box
+    lynx localhost:8000
+        you should see the start using django page
+        hit q then y to quit in the lynx session
+        hit <ctl>-c to stop the gunicorn session
+# set up gunicorn (wsgi) as a service so it loads on startup
+sudo cp -f $HOME/uweb/production_files/gunicorn.service /etc/systemd/system/gunicorn.service
+# enable and start our new gunicorn service
+systemctl enable gunicorn
+systemctl start gunicorn
+systemctl status gunicorn
+# make sure it is running and check for pid file
+ls $HOME/uweb/website
+(you should see a uweb.sock file)
 # re-start our nginx service and print the status to console to pick up the new config and uwsgi integration
 systemctl stop nginx
 systemctl start nginx
 systemctl status nginx
-NOTE: if problems with uwsgi see original doc here: https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-uwsgi-and-nginx-on-ubuntu-16-04
+# NOTE References for future lookups
+https://gist.github.com/Atem18/4696071
+https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04
 ```
 
     
