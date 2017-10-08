@@ -202,7 +202,8 @@ To set up the user and group on the server:
 getent group www-data || groupadd www-data
 id -u uweb &>/dev/null || useradd -g www-data -m -G sudo uweb
 usermod -a -G www-data uweb
-
+# test that you can sudo to uweb to do stuff
+sudo su - uweb
 ```
 Essentially, we will be following the same install steps above with the following exceptions:
 
