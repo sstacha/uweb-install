@@ -191,7 +191,20 @@ todo: get some help to create wiki pages for these types of instructions per too
  
 INSTALL PRODUCTION (ASSUMING UBUNTU SERVER)
 --------
-Even personal websites should have a staging or development installation (usually your laptop for new development work) and a production installation (usually an always on machine or hosted server).  I am not going to cover why we want to do this here.  I will put together a video or wiki page to explain that later.  This will only be the steps to get a production server installed and configured.  Essentially, we will be following the same install steps above with the following exceptions:
+Even personal websites should have a staging or development installation (usually your laptop for new development work) and a production installation (usually an always on machine or hosted server).  I am not going to cover why we want to do this here.  I will put together a video or wiki page to explain that later.  This will only be the steps to get a production server installed and configured.  
+
+In production, is is a good practice to set up a user for this purpose and log in or sudo as them to do everything instead of doing it as yourself.  This way if you (the administrator) leave you don't have to change much except add the new user and modify the sudoers file.  Scripts and such are written expecting a uweb user and www-data group.
+If you choose to use your own user and group instead just modify the scripts after you copy them.
+
+To set up the user and group on the server:
+``` ShellSession
+# set up our required users and groups we need
+getent group www-data || groupadd www-data
+id -u uweb &>/dev/null || useradd -g www-data -m -G sudo uweb
+usermod -a -G www-data uweb
+
+```
+Essentially, we will be following the same install steps above with the following exceptions:
 
  - Instead of installing to a directory that makes since on your development machine like <home>/dev/projects we want to install to something that makes sense for a production machine.  
 ``` ShellSession
@@ -217,7 +230,8 @@ eval "$(pyenv virtualenv-init -)"
 - Follow all instructions up to and including create and install uweb environment; skip all development integrations since we don't need them
     - install and configure our production webserver and uwsgi
 ``` ShellSession
-# assuming you have sudo configured for your user in production to run all commands; google it if not
+# assuming you have sudo configured for your user and the administrator user in production to run all commands; google it if not
+sudo su - uweb
 # assuming using ubuntu server
 # (optional) but recommended to download my uarchive script (into your home directory)
 # instructions can be found here.  If not you will need to archive files on your own:
@@ -274,6 +288,7 @@ gunicorn docroot.wsgi
         hit <ctl>-c to stop the gunicorn session
 # set up gunicorn (wsgi) as a service so it loads on startup
 sudo cp -f $HOME/uweb/production_files/gunicorn.service /etc/systemd/system/gunicorn.service
+NOTE: if not using the uweb user and www-data group change the user and group in this script now
 # enable and start our new gunicorn service
 systemctl enable gunicorn
 systemctl start gunicorn
