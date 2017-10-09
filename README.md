@@ -320,7 +320,9 @@ ls $HOME/uweb/website
 systemctl stop nginx
 systemctl start nginx
 systemctl status nginx
-
+# NOTE: to reload after making an edit
+    sudo systemctl daemon-reload
+    sudo systemctl restart nginx
 # last step is to create and setup our database & static files from code
 (from the website directory)
 ./manage.py makemigrations
