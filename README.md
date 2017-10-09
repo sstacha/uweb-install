@@ -67,14 +67,12 @@ CREATE AND INSTALL UWEB PROJECT
 ``` ShellSession
 # todo: wrap this in an install script ./install-website.sh (creates the website folder with all code)
 pip install django
-pip install uwsgi
 
 mkdir website
 cd website
 
-NOTE: if you are restoring from an existing codebase you can skip these 2 steps and instead: git clone git://github.com/youruser/somename.git .
-django-admin startproject docroot .
-cp -R ../uweb_files/ docroot/
+NOTE: if you are restoring from an existing codebase you can skip these 2 steps and instead: 
+git clone git://github.com/youruser/somename.git .
 
 MANUAL STEPS TILL I CAN GET TO THIS:
 
@@ -199,27 +197,31 @@ If you choose to use your own user and group instead just modify the scripts aft
 To set up the user and group on the server:
 ``` ShellSession
 # set up our required users and groups we need
-getent group www-data || groupadd www-data
-id -u uweb &>/dev/null || useradd -g www-data -m -G sudo uweb
-usermod -a -G www-data uweb
+sudo getent group www-data || sudo groupadd www-data
+sudo id -u uweb &>/dev/null || sudo useradd -g www-data -m -G sudo uweb
+sudo usermod -a -G www-data uweb
+# set the new uweb users password so we can sudo commands as them if needed
+sudo passwd uweb
 # test that you can sudo to uweb to do stuff
 sudo su - uweb
 ```
-Essentially, we will be following the same install steps above with the following exceptions:
+Essentially, we will be following the same install steps above again but installing from apt-get instead of brew
 
  - Instead of installing to a directory that makes since on your development machine like <home>/dev/projects we want to install to something that makes sense for a production machine.  
 ``` ShellSession
-# instead of cd ~/dev/projects
 cd ~        
 ```
 - Instructions to install pyenv from post here: https://askubuntu.com/questions/865554/how-do-i-install-python-3-6-using-apt-get
 ``` ShellSession
+# make sure our environment packages are up to datesudo apt-get update
+sudo apt-get upgrade
 # base required files
 sudo apt-get install -y build-essential libbz2-dev libssl-dev libreadline-dev libsqlite3-dev tk-dev
 # optional scientific package headers (for Numpy, Matplotlib, SciPy, etc.)
 sudo apt-get install -y libpng-dev libfreetype6-dev
 # optional text based browser for testing
 sudo apt-get install -y lynx
+# NOTE: make sure you are uweb; if not:  sudo su - uweb
 # run installer
 curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
 # add the following lines to your ~.profile or ~.bashrc
@@ -229,22 +231,39 @@ eval "$(pyenv virtualenv-init -)"
 # reload your shell and make sure it works by echo $PATH and searching for .pyenv
 ```
 - Follow all instructions up to and including create and install uweb environment; skip all development integrations since we don't need them
-    - install and configure our production webserver and uwsgi
+``` ShellSession
+pyenv install 3.6.2
+pyenv global 3.6.2
+pyenv virtualenv 3.6.2 uweb
+pyenv local uweb
+# to make sure it is set if no indicator: pyenv versions
+pip install django
+git clone https://github.com/sstacha/uweb-install.git uweb
+mkdir website
+cd website
+git clone git://github.com/youruser/yourgitproject.git .
+    
+```
+
+- install and configure our production webserver and uwsgi
 ``` ShellSession
 # assuming you have sudo configured for your user and the administrator user in production to run all commands; google it if not
-sudo su - uweb
+sudo su - uweb (if not already the application user)
 # assuming using ubuntu server
 # (optional) but recommended to download my uarchive script (into your home directory)
-# instructions can be found here.  If not you will need to archive files on your own:
-https://github.com/sstacha/uarchive
-# make sure our environment packages are up to date and install the web server
-sudo apt-get update
-sudo apt-get upgrade
+# instructions and information can be found @ https://github.com/sstacha/uarchive.  If not you will need to archive files on your own:
+git clone https://github.com/sstacha/uarchive.git
+# add this to your .profile
+# uarchive settings
+PATH=$PATH:$HOME/uarchive/bin
+export UARCHIVE_HOME=$HOME/uarchive/archive
+# reload your shell and get back to the website directory    
+# install the web server
 sudo apt-get install nginx
 # archive the current copy of the existing file if it exists
 archive /etc/nginx/sites-available/default
 NOTE: if you didn't download the uarcive project you can just make a copy in case you need to put it back later
-# copy nginx config file: todo insert command here when you do it (replaces anything there!)
+# copy nginx config file (replaces anything there!)
 sudo cp -f $HOME/uweb/production_files/default /etc/nginx/sites-available/default
 # if using consolidated storage (variable is set) set the file as current archived version
 archive -c /etc/nginx/sites-available/default
@@ -291,9 +310,9 @@ gunicorn docroot.wsgi
 sudo cp -f $HOME/uweb/production_files/gunicorn.service /etc/systemd/system/gunicorn.service
 NOTE: if not using the uweb user and www-data group change the user and group in this script now
 # enable and start our new gunicorn service
-systemctl enable gunicorn
-systemctl start gunicorn
-systemctl status gunicorn
+sudo systemctl enable gunicorn
+sudo systemctl start gunicorn
+sudo systemctl status gunicorn
 # make sure it is running and check for pid file
 ls $HOME/uweb/website
 (you should see a uweb.sock file)
@@ -301,6 +320,13 @@ ls $HOME/uweb/website
 systemctl stop nginx
 systemctl start nginx
 systemctl status nginx
+
+# last step is to create and setup our database & static files from code
+(from the website directory)
+./manage.py makemigrations
+./manage.py migrate
+./manage.py collectstatic
+
 # NOTE References for future lookups
 https://gist.github.com/Atem18/4696071
 https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04
