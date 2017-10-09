@@ -4,7 +4,7 @@ After=syslog.target network.target
 
 [Service]
 # ExecStart=/home/uweb/.pyenv/uweb /home/uweb/website/manage.py runserver 0.0.0.0:8000
-ExecStart=/home/uweb/.pyenv/versions/uweb /home/uweb/.pyenv/versions/uweb/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/uweb/website/myproject.sock docroot.wsgi
+ExecStart=/home/uweb/.pyenv/versions/uweb/bin/gunicorn --workers 3 --bind unix:/home/uweb/website/uweb.sock docroot.wsgi
 WorkingDirectory=/home/uweb/website
 Restart=always
 StandardOutput=syslog
