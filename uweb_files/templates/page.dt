@@ -1,4 +1,4 @@
-{% extends "bootstrap.dt" %}
+{% extends "cms.dt" %}
 
 {% block meta %}
         {# -- adding meta title to boilerplate for search engine overrides per page -- #}

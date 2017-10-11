@@ -8,7 +8,7 @@
 from django.conf import settings
 import logging
 
-from .. import docroot_views
+from cms import views as cms_views
 from django.http import Http404
 # from django.core.exceptions import MiddlewareNotUsed
 
@@ -35,14 +35,14 @@ class DocrootFallbackMiddleware(object):
             # first attempt to load a static file (should we skip this if nginx arleady processed? DEBUG=FALSE?
 
             # attempt to load as static file
-            result = docroot_views.static(request)
+            result = cms_views.static(request)
             if result:
                 log.debug("result is a static file...")
                 response = result
 
             # attempt to load as template
             if not result:
-                result = docroot_views.page(request)
+                result = cms_views.page(request)
                 if result:
                     log.debug("result is not none so returning it...")
                     response = result
