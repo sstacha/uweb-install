@@ -6,7 +6,7 @@ if [ ! -d "../website" ]; then
     pip install django
     pip install requests
     pip install gunicorn
-    mkdir website
+    mkdir ../website
 fi
 
 # setup a base docroot application in this project folder if we have not already done so
