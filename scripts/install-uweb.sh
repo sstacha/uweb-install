@@ -40,6 +40,12 @@ if [ -d "../website" ]; then
             cp -Rf ../docroot_files/files/   docroot/files/
         fi
 
+        # copy all the current preloaded cms files into a new app directory if the cms dir doesn't exist
+        if [[ ! -d 'docroot/cms' ]]; then
+            mkdir docroot/cms
+            cp -Rf ../docroot_files/cms/   docroot/cms/
+        fi
+
 #        echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin@example.com', 'admin', 'admin')" | /venv/bin/python manage.py shell
 #        sed -i 's/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \[\"\*\"\]/' docroot/settings.py
 #        echo 'STATIC_ROOT = os.path.join(BASE_DIR, "static/")' >> docroot/settings.py
