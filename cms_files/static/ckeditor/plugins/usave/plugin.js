@@ -24,6 +24,35 @@ function u_getId(editor) {
         id = editor.id;
     return id;
 }
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+// get the crsf token to be able to submit to the server
+var csrftoken = getCookie('csrftoken');
+// alert(csrftoken);
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain && csrftoken) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
 
 CKEDITOR.plugins.add( 'usave', {
     icons: 'usave',
@@ -76,7 +105,7 @@ CKEDITOR.plugins.add( 'usave', {
                     method: "GET",
                     dataType: "json",
                     url: loadUrl, // "/content",
-                    data: {"url": u_getRelativeUrlId()}
+                    data: {"uri": u_getRelativeUrlId()}
                 }).done(function (msg) {
                     console.log('------------ loading editor data from server -------------');
                     console.log('ready: asking server for all content with this url...');
@@ -88,7 +117,7 @@ CKEDITOR.plugins.add( 'usave', {
                         var id = u_getId(editor);
                         console.log("ready: id: " + id);
                         msg.forEach(function(entry) {
-                            if (entry.id == id) {
+                            if (entry.element_id == id) {
                                 editor.setData(entry.content, {noSnapshot: true});
                                 editor.resetDirty();
                                 console.log("ready: set data for id: " + id);
@@ -141,15 +170,21 @@ CKEDITOR.plugins.add( 'usave', {
                             type: 'POST',
                             contentType: "application/json",
                             dataType: "json",
-                            data: JSON.stringify({"id": id, "url": rel_url, "content": data})
+                            data: JSON.stringify({"element_id": id, "uri": rel_url, "content": data})
                             //data: {content: data, id: editor.name, url: page}
                         })
-                            .done(function (response) {
-                                console.log("success: " + response);
-                                alert("Edits were saved.");
-                                //console.log('id: ' + id + ' \nurl: ' + rel_url + ' \ncontent: ' + data);
-                                console.log('[' + id + '] ' + rel_url + ' saved.');
-                                editor.resetDirty();
+                            .done(function (data, textStatus, jqXHR) {
+                                // console.log(jqXHR.status);
+                                // console.log(textStatus);
+                                console.log("done: " + data);
+                                if (jqXHR.status && (jqXHR.status == 200 || jqXHR.status == 201)) {
+                                    alert("Edits were saved.");
+                                    //console.log('id: ' + id + ' \nurl: ' + rel_url + ' \ncontent: ' + data);
+                                    console.log('[' + id + '] ' + rel_url + ' saved.');
+                                    editor.resetDirty();
+                                }
+                                else
+                                    console.log('[' + jqXHR.status + '] ' + textStatus)
                             })
                             .fail(function (jqXHR, textStatus) {
                                 console.log("server save error: " + JSON.stringify(textStatus));

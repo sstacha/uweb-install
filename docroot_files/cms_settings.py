@@ -12,10 +12,11 @@ STATICFILES_DIRS = (
 
 # add our docroot application to the installed apps and middleware initializations
 MIDDLEWARE += (
-    'docroot.middleware.routes.DocrootFallbackMiddleware',
+    'cms.middleware.routes.DocrootFallbackMiddleware',
 )
 INSTALLED_APPS += (
     'docroot',
+    'cms',
 )
 
 # add logging and our loggers

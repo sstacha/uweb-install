@@ -8,8 +8,8 @@ CKEDITOR.editorConfig = function( config ) {
     // For complete reference see:
     // http://docs.ckeditor.com/#!/api/CKEDITOR.config
     config.extraPlugins = 'usave';
-    config.usaveSubmitURL = '/_cms/content';
-    config.usaveLoadURL = '/_cms/content';
+    config.usaveSubmitURL = '/_cms/content/';
+    config.usaveLoadURL = '/_cms/content/';
 
     // The toolbar groups arrangement, optimized for two toolbar rows.
     // config.toolbarGroups = [

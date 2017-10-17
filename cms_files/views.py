@@ -5,16 +5,19 @@ import os
 import logging
 import mimetypes
 import importlib.util
-import urllib
+import json
 
 from django.conf import settings
 from django.template import Context, Template, Origin
 from django.http import HttpResponse, FileResponse, JsonResponse
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_protect
+from django.core import serializers
 from pprint import pprint
 # from django.shortcuts import redirect
 from django.shortcuts import render
+
+from .models import Content
 
 log = logging.getLogger("docroot.views")
 
@@ -151,19 +154,47 @@ def render_page(request, template, module_name):
     response = HttpResponse(template.render(Context(context)))
     return response
 
-# class based view for getting and putting content
+# class based view for getting and putting cms content
 class ContentApi(View):
     def get(self, request):
-        # res = urllib.request.urlopen(
-        #     'https://www.spe.org'
-        # )
-        # print(pprint(vars(res)))
-        # get and return any content for this url
-        return JsonResponse([], safe=False)
+        db_content = None
+        # get the requested uri
+        uri = request.GET.get('uri', None)
+        if uri:
+            db_content = Content.objects.filter(uri=uri).values('uri', 'element_id', 'content')
+        # return any content for this url
+        return JsonResponse(list(db_content) or [], safe=False)
 
     def post(self, request):
-        # get and return any content for this url
-        return JsonResponse([], safe=False)
+        # save and return any content for this url
+        received_json_data = json.loads(request.body.decode("utf-8"))
+        # data = request.body.decode('utf-8')
+        # received_json_data = json.loads(data)
+        content = received_json_data.get('content', None)
+        if content:
+            uri = received_json_data.get('uri', '')
+            element_id = received_json_data.get('element_id', None)
+            # lookup a record for this uri, element_id combination
+            try:
+                db_content = Content.objects.get(uri=uri, element_id=element_id)
+            except Content.DoesNotExist:
+                db_content = None
+
+            if db_content:
+                db_content.content = content
+                db_content.save()
+            else:
+                db_content = Content()
+                db_content.uri = uri
+                db_content.element_id = element_id
+                db_content.content = content
+                db_content.save()
+
+            serialized_object = serializers.serialize('json', [db_content, ])
+            return JsonResponse(serialized_object or [], safe=False)
+        else:
+            return HttpResponse(status=204)
+
 
 # redo this after we figure out about the requests requirement
 # class UrlValidationApi(View):
