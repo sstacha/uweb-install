@@ -18,7 +18,7 @@ if [ -d "../website" ]; then
     else
         echo "manage.py not found; performing initial project install"
         django-admin startproject docroot .
-        manage.py migrate
+        ./manage.py migrate
 
         # check that we have a settings.py file and a cms_settings.py file; if so append the block to the bottom
         if [[ -f ../docroot_files/cms_settings.py && -f docroot/settings.py ]]; then
