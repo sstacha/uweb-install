@@ -43,7 +43,7 @@ if [ -d "../website" ]; then
         # copy all the current preloaded cms files into a new app directory if the cms dir doesn't exist
         if [[ ! -d 'docroot/cms' ]]; then
             mkdir docroot/cms
-            cp -Rf ../docroot_files/cms/   docroot/cms/
+            cp -Rf ../cms_files/   docroot/cms/
         fi
 
 #        echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin@example.com', 'admin', 'admin')" | /venv/bin/python manage.py shell
