@@ -21,21 +21,21 @@ if [ -d "../website" ]; then
         ./manage.py migrate
 
         # check that we have a settings.py file and a cms_settings.py file; if so append the block to the bottom
-        if [[ -f ../docroot_files/cms_settings.py && -f docroot/settings.py ]]; then
+        if [[ -f '../docroot_files/cms_settings.py' && -f 'docroot/settings.py' ]]; then
             cat ../docroot_files/cms_settings.py >> docroot/settings.py
         else
             echo 'WARNING: either the docroot_files/cms_settings.py or the docroot/settings.py was not found; cms settings were not appended!'
         fi
 
         # check that we have a urls.py file and a cms_urls.py file; if so append the block to the bottom
-        if [[ -f ../docroot_files/cms_urls.py && -f docroot/urls.py ]]; then
+        if [[ -f '../docroot_files/cms_urls.py' && -f 'docroot/urls.py' ]]; then
             cat ../docroot_files/cms_urls.py >> docroot/urls.py
         else
             echo 'WARNING: either the docroot_files/cms_urls.py or the docroot/urls.py was not found; urls were not appended!'
         fi
 
         # copy all the current preloaded files into our newly created docroot directory if the files dir doesn't exist
-        if [[ ! -d docroot/files ]]; then
+        if [[ ! -d 'docroot/files' ]]; then
             mkdir docroot/files
             cp -Rf ../docroot_files/files/   docroot/files/
         fi
