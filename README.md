@@ -6,7 +6,7 @@ cd to install directory: ie,
 cd ~/dev/projects
 ```
 
-CLONE THIS CODE TO YOUR NEW PROJECT DIRECTORY
+CLONE THIS CODE TO AN INSTALL DIRECTORY (in this example "uweb")
 ``` ShellSession
 git clone https://github.com/sstacha/uweb-install.git uweb 
 cd uweb
