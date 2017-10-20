@@ -56,7 +56,7 @@ if [ -d "../website" ]; then
 
 
         # add an admin user
-        echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin@example.com', 'admin', 'admin')" | /venv/bin/python manage.py shell
+        echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin@example.com', 'admin', 'admin')" | python manage.py shell
 #        sed -i 's/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \[\"\*\"\]/' docroot/settings.py
 #        echo 'STATIC_ROOT = os.path.join(BASE_DIR, "static/")' >> docroot/settings.py
 #        /venv/bin/pip install uwsgi
