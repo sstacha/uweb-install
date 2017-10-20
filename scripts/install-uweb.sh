@@ -46,7 +46,17 @@ if [ -d "../website" ]; then
             cp -Rf ../cms_files/ cms/
         fi
 
-#        echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin@example.com', 'admin', 'admin')" | /venv/bin/python manage.py shell
+        # copy our gitignore file
+        if [[ -f '../.gitignore' ]]; then
+            cp ../.gitignore ../website/.gitignore
+        else
+            echo 'WARNING: the cms .gitignore file was not found or copied!  You must now do this manually.'
+            echo 'WARNING: make sure your .secret_key file is not checked into your public repo!'
+        fi
+
+
+        # add an admin user
+        echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin@example.com', 'admin', 'admin')" | /venv/bin/python manage.py shell
 #        sed -i 's/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = \[\"\*\"\]/' docroot/settings.py
 #        echo 'STATIC_ROOT = os.path.join(BASE_DIR, "static/")' >> docroot/settings.py
 #        /venv/bin/pip install uwsgi
