@@ -2,7 +2,7 @@
 {% extends "bootstrap.dt" %}
 {% load static %}
 
-{% block layout_css %}
+{% block page-css %}
     {{ block.super }}
     <style>
         .cke_show_borders {
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {# todo: see about a request middleware to determine editable (minimize any db calls)  #}
-{% block layout_js %}
+{% block page-js %}
     {{ block.super }}
     {# todo: python wrapper this with a check for loading ckeditor in the first place #}
     <script src="https://cdn.ckeditor.com/4.7.3/standard/ckeditor.js"></script>
