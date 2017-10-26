@@ -19,7 +19,7 @@ from django.shortcuts import render
 
 from .models import Content
 
-log = logging.getLogger("docroot.views")
+log = logging.getLogger("cms.views")
 
 # This view is called from DocrootFallbackMiddleware.process_response
 # when a 404 is raised and we are not working with a template (we want to look for a static file in the docroot)

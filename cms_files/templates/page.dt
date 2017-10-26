@@ -1,8 +1,117 @@
-{% extends "cms.dt" %}
+{% extends "skin.dt" %}
 
 {% block meta %}
         {# -- adding meta title to boilerplate for search engine overrides per page -- #}
         <meta name="title" content="{% block title %}{% endblock %}" />
         <meta name="description" content="{% block description %}{% endblock %}" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
+{% block page-header %}
+<!--Main Navigation-->
+<header>
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark indigo">
+        <div class="container">
+            <!-- Navbar brand -->
+            <a class="navbar-brand" href="#">Navbar</a>
+
+            <!-- Collapse button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+            <!-- Collapsible content -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <!-- Links -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+
+                    <!-- Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </li>
+
+                </ul>
+                <!-- Links -->
+
+                <!-- Search form -->
+                <form class="form-inline">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                </form>
+            </div>
+            <!-- Collapsible content -->
+        </div>
+    </nav>
+    <!--/.Navbar-->
+    {% block header %}{% endblock %}
+</header>
+<!--Main Navigation-->
+{% endblock %}
+
+{% block page-content %}
+<!--Main layout-->
+<main class="mt-5">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+<!--Main layout-->
+
+{% endblock %}
+
+{% block page-footer %}
+<!--Footer-->
+<footer class="page-footer indigo center-on-small-only">
+
+    <!--Footer Links-->
+    <div class="container">
+        <div class="row">
+
+            <!--First column-->
+            <div class="col-md-6">
+                <h5 class="title">Footer Content</h5>
+                <p>Here you can use rows and columns here to organize your footer content.</p>
+            </div>
+            <!--/.First column-->
+
+            <!--Second column-->
+            <div class="col-md-6">
+                <h5 class="title">Links</h5>
+                <ul>
+                    <li><a href="#!">Link 1</a></li>
+                    <li><a href="#!">Link 2</a></li>
+                    <li><a href="#!">Link 3</a></li>
+                    <li><a href="#!">Link 4</a></li>
+                </ul>
+            </div>
+            <!--/.Second column-->
+        </div>
+    </div>
+    <!--/.Footer Links-->
+
+    <!--Copyright-->
+    <div class="footer-copyright">
+        <div class="container">
+            © 2015 Copyright: <a href="https://www.MDBootstrap.com"> MDBootstrap.com </a>
+
+        </div>
+    </div>
+    <!--/.Copyright-->
+    {% block footer %}{% endblock %}
+</footer>
+<!--/.Footer-->
 {% endblock %}

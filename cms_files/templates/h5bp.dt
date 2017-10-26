@@ -15,26 +15,31 @@
         <link rel="stylesheet" href="{% static "h5bp/css/main.css" %}">
         <script src="{% static "h5bp/js/vendor/modernizr-2.8.3.min.js" %}"></script>
 
-        {% block layout_css %}{% endblock %}
+        {% block page-css %}{% endblock %}
         {% block css %}{% endblock %}
     </head>
     <body>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-
+        {# -- header #}
+        {% block page-header %}
+        {% endblock %}
         {# -- Add your site or application content here -- #}
-        {% block content %}
+        {% block page-content %}
             <p>Hello world! This is HTML5 Boilerplate.</p>
         {% endblock %}
+        {# -- footer  #}
+        {% block page-footer %}
+        {% endblock %}
 
-
-        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+{#        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>#}
         <script>window.jQuery || document.write('<script src="{% static "h5bp/js/vendor/jquery-1.12.0.min.js" %}"><\/script>')</script>
         <script src="{% static "h5bp/js/plugins.js" %}"></script>
         <script src="{% static "h5bp/js/main.js" %}"></script>
 
-        {% block layout_js %}{% endblock %}
+        {% block page-js %}{% endblock %}
         {% block js %}{% endblock %}
 
     </body>
