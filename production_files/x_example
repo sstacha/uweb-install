@@ -34,22 +34,20 @@ server {
 	# include snippets/snakeoil.conf;
 
 	# root /var/www/html;
-    root /home/uweb/server/website;
+    root /home/example/website;
 
 	# Add index.php to the list if you are using PHP
 	index index.html index.htm index.nginx-debian.html;
 
-	server_name _;
-	# use this instead of _ for an example site instead of a default one (virtual domain)
-	# server_name example.com;
+	server_name example.com;
 
     # Django media
     location /media  {
-        alias /home/uweb/website/media;
+        alias /home/example/website/media;
     }
     # django static
     location /static {
-        alias /home/uweb/website/static;
+        alias /home/example/website/static;
     }
 
     # the rest of the cache, images and docroot files
@@ -72,7 +70,7 @@ server {
     # todo: insert the static & media directory above as well
     location @django {
         include         proxy_params;
-        proxy_pass      http://unix:/home/uweb/website/uweb.sock;
+        proxy_pass      http://unix:/home/example/website/uweb.sock;
     }
     # todo : test proxy_params may need to change to
     #

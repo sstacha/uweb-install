@@ -1,5 +1,5 @@
 [Unit]
-Description=Gunicorn uwsgi implementation
+Description=Gunicorn wsgi implementation
 After=syslog.target network.target
 
 [Service]
@@ -12,7 +12,7 @@ StandardError=syslog
 SyslogIdentifier=uweb
 User=uweb
 Group=www-data
-Environment=NODE_ENV=dev
+Environment=WEBSITE_ENV=dev
 
 [Install]
 WantedBy=default.target
