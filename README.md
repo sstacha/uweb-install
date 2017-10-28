@@ -307,16 +307,16 @@ gunicorn docroot.wsgi
         hit q then y to quit in the lynx session
         hit <ctl>-c to stop the gunicorn session
 # set up gunicorn (wsgi) as a service so it loads on startup
-sudo cp -f $HOME/uweb/production_files/gunicorn.service /etc/systemd/system/gunicorn.service
+sudo cp -f $HOME/uweb/production_files/default_wsgi.service /etc/systemd/system/default_wsgi.service
 NOTE: if not using the uweb user and www-data group change the user and group in this script now
-# enable and start our new gunicorn service
-sudo systemctl enable gunicorn
-sudo systemctl start gunicorn
-sudo systemctl status gunicorn
+# enable and start our new wsgi service
+sudo systemctl enable default_wsgi
+sudo systemctl start default_wsgi
+sudo systemctl status default_wsgi
 # make sure it is running and check for pid file
 ls $HOME/uweb/website
 (you should see a uweb.sock file)
-# re-start our nginx service and print the status to console to pick up the new config and uwsgi integration
+# re-start our nginx service and print the status to console to pick up the new config and wsgi integration
 systemctl stop nginx
 systemctl start nginx
 systemctl status nginx
