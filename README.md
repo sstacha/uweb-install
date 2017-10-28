@@ -343,7 +343,10 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postg
 - aside from above follow all instructions up to overriding the default nginx config file
     - cp ~/uweb/production-files/default ~/uweb/production-files/<your site name> 
         (example in this case)
-    - edit the copied version and uncomment all virtual server lines and comment the original ones.  Then change the directories from the default /home/uweb to your new home directory like /home/example.  NOTE: if you do a global replace make sure the proxy_pass line still says uweb.sock at the end.  (example: http://unix:/home/example/website/uweb.sock;)
+    - edit the copied version and uncomment all virtual server lines and comment the original ones.  
+    Then change the directories from the default /home/uweb to your new home directory like /home/example.  
+    NOTE: if you do a global replace make sure the proxy_pass line still says uweb.sock at the end.  
+    (example: http://unix:/home/example/website/uweb.sock;)
     - copy this file into the nginx config location
     sudo cp -f $HOME/uweb/production_files/example /etc/nginx/sites-available/example
     - sym link to make it active
@@ -351,7 +354,9 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postg
 - when you get to copying the default-wsgi.service file you will need to again do some extra steps to change this file for your new environment
     - cp ~/uweb/production-files/default_wsgi.service ~/uweb/production-files/<your site name>.service
         (ex: example_wsgi.service)
-    - edit the file replacing any home directory locations and the user setting.  NOTE: if globally replacing dont forget about uweb.sock and that the .pyenv/versions/ virtual directory name is still uweb unless you changed it.
+    - edit the file replacing any home directory locations and the user setting.  
+    NOTE: if globally replacing dont forget about uweb.sock and that the .pyenv/versions/ virtual directory name is still uweb 
+    unless you changed it.
     - copy this new file instead of the default one
     ex: sudo cp -f $HOME/uweb/production_files/example_wsgi.service /etc/systemd/system/example_wsgi.service
     - run the enable, start and status systemctl commands with your new service name instead of the default one
