@@ -221,7 +221,7 @@ sudo apt-get install -y build-essential libbz2-dev libssl-dev libreadline-dev li
 sudo apt-get install -y libpng-dev libfreetype6-dev
 # optional text based browser for testing
 sudo apt-get install -y lynx
-# NOTE: make sure you are uweb; if not:  sudo su - uweb
+# NOTE: make sure you are logged in as the site user; if not:  sudo su - uweb
 # run installer
 curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
 # add the following lines to your ~.profile or ~.bashrc
@@ -332,6 +332,35 @@ systemctl status nginx
 # NOTE References for future lookups
 https://gist.github.com/Atem18/4696071
 https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04
+```
+- Multiple Websites
+``` ShellSession
+# When installing multiple sites there are a couple of addtional steps on the second site install
+- follow the instructions for user but create a site user instead of uweb (default site user)
+    - for example: example.com -> create user example
+- you do not need to re-download the unix installs from apt-get these are system wide
+    - NOTE: it will not hurt if you do
+- aside from above follow all instructions up to overriding the default nginx config file
+    - cp ~/uweb/production-files/default ~/uweb/production-files/<your site name> 
+        (example in this case)
+    - edit the copied version and uncomment all virtual server lines and comment the original ones.  Then change the directories from the default /home/uweb to your new home directory like /home/example.  NOTE: if you do a global replace make sure the proxy_pass line still says uweb.sock at the end.  (example: http://unix:/home/example/website/uweb.sock;)
+    - copy this file into the nginx config location
+    sudo cp -f $HOME/uweb/production_files/example /etc/nginx/sites-available/example
+    - sym link to make it active
+    sudo ln -s /etc/nginx/sites-available/example /etc/nginx/sites-enabled/example
+- when you get to copying the default-wsgi.service file you will need to again do some extra steps to change this file for your new environment
+    - cp ~/uweb/production-files/default_wsgi.service ~/uweb/production-files/<your site name>.service
+        (ex: example_wsgi.service)
+    - edit the file replacing any home directory locations and the user setting.  NOTE: if globally replacing dont forget about uweb.sock and that the .pyenv/versions/ virtual directory name is still uweb unless you changed it.
+    - copy this new file instead of the default one
+    ex: sudo cp -f $HOME/uweb/production_files/example_wsgi.service /etc/systemd/system/example_wsgi.service
+    - run the enable, start and status systemctl commands with your new service name instead of the default one
+    
+- Test
+    - on your laptop or other external machine change youqr hosts file to include the example domain and the default one
+    ex: 10.10.10.200    test.com example.com
+    - create a test page on each one and check them in and push them.  From the server do a get pull in each directory to get the changes.
+    - you should now see a different test page for each domain.
 ```
 
     
