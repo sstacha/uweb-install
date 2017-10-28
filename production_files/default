@@ -13,9 +13,13 @@
 
 # Default server configuration
 #
+# NOTE: if using a virtual server don't forget to change the user home directory path below
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
+	# use these instead for a virtual server
+	# listen 80;
+	# listen [::]:80;
 
 	# SSL configuration
 	#
