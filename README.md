@@ -366,6 +366,11 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postg
     ex: 10.10.10.200    test.com example.com
     - create a test page on each one and check them in and push them.  From the server do a get pull in each directory to get the changes.
     - you should now see a different test page for each domain.
+    
+NOTE: if you get an error indicating you need to add your domain to the allowed_hosts you simply edit the settings.py file and put your site between the empty brackets like so:
+ALLOWED_HOSTS=['example.com', 'test.com']
+
+Reference: http://michal.karzynski.pl/blog/2013/10/29/serving-multiple-django-applications-with-nginx-gunicorn-supervisor/
 ```
 
     
