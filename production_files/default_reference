@@ -22,7 +22,6 @@
 #}
 
 server {
-    # NOTE: comment these when setting up SSL Https instead
 	listen 80 default_server;
 	listen [::]:80 default_server;
 	# use these instead for a virtual server
@@ -44,13 +43,6 @@ server {
 	# Don't use them in a production server!
 	#
 	# include snippets/snakeoil.conf;
-    # NOTE: uncomment these common settings and adjust for your domain for common https options
-    ssl on;
-    ssl_certificate /etc/ssl/certs/<yourdomain>/<yourdomain>.crt;
-    ssl_certificate_key /etc/ssl/certs/<yourdomain>/<yourdomain>.key;
-    ssl_session_timeout 1d;
-    ssl_session_cache shared:SSL:20m;
-    ssl_session_tickets off;
 
 	# root /var/www/html;
     root /home/uweb/server/website;
@@ -88,14 +80,82 @@ server {
                     /docroot/$uri/index.html @django;
                     
 	}
+    # todo: insert the static & media directory above as well
     location @django {
         include         proxy_params;
         proxy_pass      http://unix:/home/uweb/website/uweb.sock;
     }
+    # todo : test proxy_params may need to change to
+    #
+    # proxy_pass http://127.0.0.1:8000;
+    # proxy_set_header Host $host;
+    # proxy_set_header X-Real-IP $remote_addr;
+    # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
-	# deny access to .dt files; prevents seeing template code directly
+    #location @django {
+    #    include         uwsgi_params;
+    #    uwsgi_pass      unix:/run/uwsgi/website.sock;
+    #}
+    #
+	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
 	#
-	location ~ /\.dt {
-		deny all;
-	}
+	#location ~ \.php$ {
+	#	include snippets/fastcgi-php.conf;
+	#
+	#	# With php7.0-cgi alone:
+	#	fastcgi_pass 127.0.0.1:9000;
+	#	# With php7.0-fpm:
+	#	fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+	#}
+
+	# deny access to .htaccess files, if Apache's document root
+	# concurs with nginx's one
+	#
+	#location ~ /\.ht {
+	#	deny all;
+	#}
 }
+
+
+# Virtual Host configuration for example.com
+#
+# You can move that to a different file under sites-available/ and symlink that
+# to sites-enabled/ to enable it.
+#
+#server {
+#	listen 80;
+#	listen [::]:80;
+#
+#	server_name example.com;
+#
+#	root /var/www/example.com;
+#	index index.html;
+#
+#	location / {
+#		try_files $uri $uri/ =404;
+#	}
+#}
+
+	#	deny all;
+	#}
+#}
+
+
+# Virtual Host configuration for example.com
+#
+# You can move that to a different file under sites-available/ and symlink that
+# to sites-enabled/ to enable it.
+#
+#server {
+#	listen 80;
+#	listen [::]:80;
+#
+#	server_name example.com;
+#
+#	root /var/www/example.com;
+#	index index.html;
+#
+#	location / {
+#		try_files $uri $uri/ =404;
+#	}
+#}
