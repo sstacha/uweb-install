@@ -292,7 +292,10 @@ archive -c /etc/nginx/sites-available/default
         sudo systemctl status uwsgi
         NOTE: if problems with uwsgi see original doc here: https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-uwsgi-and-nginx-on-ubuntu-16-04
         -->
-    
+
+# edit settigns.py to make it production
+# change DEBUG=True to DEBUG=False
+    NOTE: if you forget you will be in debug mode which will return alot of debug information; just set to False as soon as you can
 NOTE: could not get uwsgi to work on python3 with pyenv on ubuntu server 16.04.  If someone does please send me the instructions.
 NOTE: changing to Gunicorn for now; much easier and shouldn't need much prossessing with this minimalist approach
 # from your website directory uninstall uwsgi if you have it installed
