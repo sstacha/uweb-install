@@ -336,6 +336,7 @@ mkdir -p cache
 ./manage.py makemigrations
 ./manage.py migrate
 ./manage.py collectstatic
+./manage.py secret_key set
 
 # NOTE References for future lookups
 https://gist.github.com/Atem18/4696071
