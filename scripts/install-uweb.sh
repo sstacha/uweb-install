@@ -22,6 +22,8 @@ if [ -d "../website" ]; then
 
         # check that we have a settings.py file and a cms_settings.py file; if so append the block to the bottom
         if [[ -f '../docroot_files/cms_settings.py' && -f 'docroot/settings.py' ]]; then
+            echo 'STATIC_ROOT = os.path.join(BASE_DIR, "static/")' >> docroot/settings.py
+            echo '' >> docroot/settings.py
             cat ../docroot_files/cms_settings.py >> docroot/settings.py
         else
             echo 'WARNING: either the docroot_files/cms_settings.py or the docroot/settings.py was not found; cms settings were not appended!'
