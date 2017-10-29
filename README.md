@@ -323,6 +323,11 @@ systemctl status nginx
 # NOTE: to reload after making an edit
     sudo systemctl daemon-reload
     sudo systemctl restart nginx
+# from our website directory create the staic directories nginx will pull from first
+cd ~/website
+mkdir -p static
+mkdir -p images
+mkdir -p cache
 # last step is to create and setup our database & static files from code
 (from the website directory)
 ./manage.py makemigrations
