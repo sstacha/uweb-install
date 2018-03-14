@@ -8,7 +8,7 @@
 from django.conf import settings
 import logging
 
-from cms import views as cms_views
+from uweb import views as cms_views
 from django.http import Http404
 # from django.core.exceptions import MiddlewareNotUsed
 

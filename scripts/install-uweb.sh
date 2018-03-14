@@ -43,9 +43,9 @@ if [ -d "../website" ]; then
         fi
 
         # copy all the current preloaded cms files into a new app directory if the cms dir doesn't exist
-        if [[ ! -d 'cms/' ]]; then
-            mkdir cms
-            cp -Rf ../cms_files/ cms/
+        if [[ ! -d 'uweb/' ]]; then
+            mkdir uweb
+            cp -Rf ../cms_files/ uweb/
         fi
 
         # copy our gitignore file

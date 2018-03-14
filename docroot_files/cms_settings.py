@@ -12,11 +12,11 @@ STATICFILES_DIRS = (
 
 # add our docroot application to the installed apps and middleware initializations
 MIDDLEWARE += (
-    'cms.middleware.routes.DocrootFallbackMiddleware',
+    'uweb.middleware.routes.DocrootFallbackMiddleware',
 )
 INSTALLED_APPS += (
     'docroot',
-    'cms',
+    'uweb',
 )
 
 # add logging and our loggers
@@ -36,22 +36,22 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': './django.log',
-            'formatter': 'simple'
-        },
+        # 'file': {
+        #     'level': 'DEBUG',
+        #     'class': 'logging.FileHandler',
+        #     'filename': './django.log',
+        #     'formatter': 'simple'
+        # },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
+            'handlers': ['console'],
+            'level': 'INFO',
             'propagate': True,
         },
         'docroot': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
+            'handlers': ['console'],
+            'level': 'INFO',
             'propagate': True,
         },
 
