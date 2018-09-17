@@ -9,7 +9,7 @@ import json
 
 from django.conf import settings
 from django.template import Context, Template, Origin
-from django.http import HttpResponse, FileResponse, JsonResponse
+from django.http import HttpResponse, FileResponse, JsonResponse, HttpResponseForbidden
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
@@ -24,15 +24,27 @@ log = logging.getLogger("cms.views")
 # This view is called from DocrootFallbackMiddleware.process_response
 # when a 404 is raised and we are not working with a template (we want to look for a static file in the docroot)
 def static(request):
-    base=getattr(settings, "BASE_DIR", "")
-    log.debug("base: " + base)
+    docroot_dir = getattr(settings, "DOCROOT_ROOT", "")
+    use_static = getattr(settings, "USE_STATIC_FORBIDDEN", False)
+    log.debug("docroot dir: " + docroot_dir)
     path = request.path_info
     if path.startswith("/"):
         path = path[1:]
     log.debug("path: " + path)
-    file = os.path.join(base, "docroot/files", path)
+    file = os.path.join(docroot_dir, path)
     log.debug("file: " + file)
     if os.path.isfile(file):
+        # for various reasons we don't want to serve up various file extensions. Let's look at a setting containing
+        # extensions to ignore
+        # USE CASE: Apache at root passes .htaccess, .dt and .py files through we don't want to show these static files
+        if use_static:
+            forbidden_extensions = getattr(settings, "STATIC_FORBIDDEN_EXTENSIONS", [])
+            forbidden_file_names = getattr(settings, "STATIC_FORBIDDEN_FILE_NAMES", [])
+            filename, ext = os.path.splitext(file)
+            if ext in forbidden_extensions:
+                return HttpResponseForbidden()
+            elif os.path.basename(filename) in forbidden_file_names:
+                return HttpResponseForbidden()
         log.debug("found static file: " + file)
         log.debug("downloading...")
         response = FileResponse(open(file, 'rb'), content_type=mimetypes.guess_type(path)[0])

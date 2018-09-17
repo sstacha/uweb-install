@@ -19,6 +19,14 @@ INSTALLED_APPS += (
     'uweb',
 )
 
+# added for a deficency in the way apache handles WSGI; would like to push this to web server at some point
+#   to eliminate 2 file checks for every request
+# don't allow our cms to serve up any templates or python code as staic files; include .htaccess for good measure
+# to disable checks set USE_STATIC_FORBIDDEN = False (eliminates 2 file system checks per request)
+USE_STATIC_FORBIDDEN = False
+STATIC_FORBIDDEN_EXTENSIONS = ['.dt', '.py', ]
+STATIC_FORBIDDEN_FILE_NAMES = ['.htaccess', ]
+
 # add logging and our loggers
 LOGGING = {
     'version': 1,
