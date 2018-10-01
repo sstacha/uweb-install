@@ -1,4 +1,5 @@
-#!/usr/bin/env sh
+#!/bin/bash
+# OLD_IMPORT: <bang>/usr/bin/env sh
 
 # check we have a django project directory
 if [ ! -d "../website" ]; then
