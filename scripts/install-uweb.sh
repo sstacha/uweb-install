@@ -4,10 +4,12 @@
 # setup our django project directory if it does not exist
 if [ ! -d "../website" ]; then
     echo "django website project folder does not exist; creating it and installing base packages..."
+    pip install --upgrade pip
     pip install django
     pip install requests
     pip install gunicorn
     mkdir ../website
+    mkdir -p ../website/data
 fi
 
 # setup a base docroot application in this project folder if we have not already done so
@@ -19,7 +21,6 @@ if [ -d "../website" ]; then
     else
         echo "manage.py not found; performing initial project install"
         django-admin startproject docroot .
-        ./manage.py migrate
 
         # check that we have a settings.py file and a cms_settings.py file; if so append the block to the bottom
         if [[ -f '../docroot_files/cms_settings.py' && -f 'docroot/settings.py' ]]; then
@@ -57,6 +58,8 @@ if [ -d "../website" ]; then
             echo 'WARNING: make sure your .secret_key file is not checked into your public repo!'
         fi
 
+        # now that settings are built lets do migrations
+        ./manage.py migrate
 
         # add an admin user
         echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin@example.com', 'admin', 'admin')" | python manage.py shell
