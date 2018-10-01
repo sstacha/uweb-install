@@ -75,6 +75,12 @@ else:
         if LOGGING['loggers'][logger]['level'] == 'DEBUG':
             LOGGING['loggers'][logger]['level'] = 'INFO'
 
+# OVERRIDING DATABASE LOCATION AND NAME FOR EASY SHARING WITHOUT HAVING TO SHARE EVERYTHING
+#
+# NOTE: we are only overriding for sqllite3.  Move the db block below this if you don't want any overrides.
+if DATABASES['default'] and DATABASES['default']['engine'] == 'django.db.backends.sqlite3':
+    DATABASES['default']['NAME']=os.path.join(BASE_DIR, 'data', 'db.sqlite3')
+
 # SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
 # ----------- secret key handler
 try:
