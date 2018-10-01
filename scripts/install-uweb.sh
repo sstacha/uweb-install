@@ -41,13 +41,13 @@ if [ -d "../website" ]; then
         # copy all the current preloaded files into our newly created docroot directory if the files dir doesn't exist
         if [[ ! -d 'docroot/files' ]]; then
             mkdir docroot/files
-            cp -Rf ../docroot_files/files/   docroot/files/
+            cp -Rf ../docroot_files/files/*   docroot/files/
         fi
 
         # copy all the current preloaded cms files into a new app directory if the cms dir doesn't exist
         if [[ ! -d 'uweb/' ]]; then
             mkdir uweb
-            cp -Rf ../cms_files/ uweb/
+            cp -Rf ../cms_files/* uweb/
         fi
 
         # copy our gitignore file
