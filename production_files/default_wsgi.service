@@ -3,14 +3,14 @@ Description=Gunicorn wsgi implementation
 After=syslog.target network.target
 
 [Service]
-# ExecStart=/home/uweb/.pyenv/uweb /home/uweb/website/manage.py runserver 0.0.0.0:8000
-ExecStart=/home/uweb/.pyenv/versions/uweb/bin/gunicorn --workers 3 --bind unix:/home/uweb/website/uweb.sock docroot.wsgi
-WorkingDirectory=/home/uweb/website
+# ExecStart=/home/default_website/uweb/.pyenv/default_website /home/default_website/uweb/website/manage.py runserver 0.0.0.0:8000
+ExecStart=/home/default_website/uweb/.pyenv/versions/default_website/bin/gunicorn --workers 3 --bind unix:/home/default_website/uweb/website/uweb.sock docroot.wsgi
+WorkingDirectory=/home/default_website/uweb/website
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=uweb
-User=uweb
+SyslogIdentifier=default_website
+User=default_website
 Group=www-data
 Environment=WEBSITE_ENV=dev
 
