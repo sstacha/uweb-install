@@ -80,4 +80,13 @@ else
     echo "Something went wrong; no website directory found even though we set it up; this shouldn't happen..."
 fi
 
+if [[ ! -d "../images" ]]; then
+    echo "images directory missing adding it so migrations will not fail"
+    mkdir -p ../images
+fi
+if [[ ! -d "../cache" ]]; then
+    echo "cache directory missing adding it so migrations will not fail"
+    mkdir -p ../cache
+fi
+
 # setup the base cms application in this project folder if we don't already have one
