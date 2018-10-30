@@ -8,7 +8,7 @@ import importlib.util
 import json
 
 from django.conf import settings
-from django.template import Context, Template, Origin
+from django.template import RequestContext, Template, Origin
 from django.http import HttpResponse, FileResponse, JsonResponse, HttpResponseForbidden
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_protect
@@ -163,7 +163,9 @@ def render_page(request, template, module_name):
             except AttributeError:
                 context = {}
     log.debug("context string: " + str(context))
-    response = HttpResponse(template.render(Context(context)))
+    template_context = RequestContext(request)
+    template_context.push(context)
+    response = HttpResponse(template.render(template_context))
     return response
 
 # class based view for getting and putting cms content
