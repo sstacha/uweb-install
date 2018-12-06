@@ -110,5 +110,6 @@ ENV/
 db.sqlite3
 # static files and images will be rsynced down from prod so don't go up with code
 /static/
-/images/
+/data/
+.sock
 .log
