@@ -1,14 +1,14 @@
 # ITEMS BETWEEN THESE HEADINGS WILL BE UPDATED
 # ------------------------ UWEB SETTINGS ------------------------------------
 # add our different roots for static files to be served up
-IMAGES_ROOT = os.path.join(BASE_DIR, "images/")
-CACHED_ROOT = os.path.join(BASE_DIR, "cache/")
+# IMAGES_ROOT = os.path.join(BASE_DIR, "images/")
+# CACHED_ROOT = os.path.join(BASE_DIR, "cache/")
 DOCROOT_ROOT = os.path.join(BASE_DIR, "docroot/files/")
-STATICFILES_DIRS = (
-    IMAGES_ROOT,
-    CACHED_ROOT,
-    DOCROOT_ROOT,
-)
+# STATICFILES_DIRS = (
+#     IMAGES_ROOT,
+#     CACHED_ROOT,
+#     DOCROOT_ROOT,
+# )
 
 # add our docroot application to the installed apps and middleware initializations
 MIDDLEWARE += (
@@ -26,6 +26,11 @@ INSTALLED_APPS += (
 USE_STATIC_FORBIDDEN = False
 STATIC_FORBIDDEN_EXTENSIONS = ['.dt', '.py', ]
 STATIC_FORBIDDEN_FILE_NAMES = ['.htaccess', ]
+# We tell django to not append slashes as this messes with our combined static/dynamic template pages docroot
+# APPEND_SLASH = False
+# Adding variable to tell our stuff to not be language aware for the default language (no /en/ appended)
+#   This is helpful for troubleshooting migrated DjangoCMS pages
+IGNORE_LANGUAGE_PREFIX = True
 
 # add logging and our loggers
 LOGGING = {
@@ -83,12 +88,12 @@ if 'default' in DATABASES and 'ENGINE' in DATABASES['default'] and DATABASES['de
 
 # SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
 # ----------- secret key handler
-try:
-    with open('.secret_key') as file:
-        SECRET_KEY = file.read()
-except FileNotFoundError:
-    print('WARNING: .secret_key NOT FOUND DEFAULTING TO [%s] from config file' % str(SECRET_KEY))
-    print('     it is recommended you run [./manage.py secret_key set] from the console!')
-    print('')
+# try:
+#     with open('.secret_key') as file:
+#         SECRET_KEY = file.read()
+# except FileNotFoundError:
+#     print('WARNING: .secret_key NOT FOUND DEFAULTING TO [%s] from config file' % str(SECRET_KEY))
+#     print('     it is recommended you run [./manage.py secret_key set] from the console!')
+#     print('')
 
 # ------------------------ UWEB SETTINGS ------------------------------------
