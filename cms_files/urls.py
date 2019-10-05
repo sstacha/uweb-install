@@ -14,8 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
+from django.urls import path
 from . import views
 
 urlpatterns = [
-    url(r'^content/$', views.ContentApi.as_view(), name='cms_content')
+    url(r'^content/$', views.ContentApi.as_view(), name='cms_content'),
+    path('login', views.LoginFormView.as_view(), name="cms_login"),
+    path('logout', views.LogoutView.as_view(), name="cms_logout"),
+    path('auth', views.AuthenticateView.as_view(), name="cms_authenticate"),
 ]

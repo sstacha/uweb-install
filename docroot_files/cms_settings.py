@@ -31,6 +31,7 @@ STATIC_FORBIDDEN_FILE_NAMES = ['.htaccess', ]
 # Adding variable to tell our stuff to not be language aware for the default language (no /en/ appended)
 #   This is helpful for troubleshooting migrated DjangoCMS pages
 IGNORE_LANGUAGE_PREFIX = True
+# DISABLE_AUTHENTICATION = True
 
 # add logging and our loggers
 LOGGING = {

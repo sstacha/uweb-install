@@ -5,6 +5,6 @@ from django.conf.urls import url
 from django.conf.urls import include
 
 urlpatterns += [
-    url(r'^_cms/', include('uweb.urls'))
+    url(r'^_cms/', include('uweb.urls')),
 ]
 # ------------------------ UWEB URLS ------------------------------------

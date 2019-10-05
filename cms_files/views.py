@@ -11,14 +11,18 @@ import codecs
 from django.conf import settings
 # from django.template import Context
 from django.template import Template, Origin, RequestContext
-from django.http import HttpResponse, FileResponse, JsonResponse, HttpResponseForbidden
+from django.http import HttpResponse, FileResponse, JsonResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_protect
 from django.core import serializers
 # from pprint import pprint
 # from django.shortcuts import redirect
-# from django.shortcuts import render
+from django.shortcuts import render
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+import base64
 
+from .forms import LoginForm
 from .models import Content
 
 log = logging.getLogger("cms.views")
@@ -329,7 +333,183 @@ class ContentApi(View):
         else:
             return HttpResponse(status=204)
 
+# # AUTHENTICATION VIEWS
+#
+class LoginFormView(View):
+    form_class = LoginForm
 
+    # initial = {'key': 'value'}
+    template_name = 'login.html'
+
+    def get(self, request, *args, **kwargs):
+        # try to get target location from header
+        target = self.request.META.get('HTTP_X_TARGET')
+        print(f"target from header: {target}")
+        if not target:
+            target = request.META.get('HTTP_REFERER')
+            print(f"target from referrer: {target}")
+        # if not target:
+        #     return HttpResponseForbidden()
+        # form = self.form_class(initial=self.initial)
+        form = self.form_class(initial={'target': target})
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            login = form.cleaned_data['login']
+            password = form.cleaned_data['password']
+            target = form.cleaned_data['target']
+            print(f"target from form: {target}")
+            if not target:
+                target = '/'
+            print(f"final target: {str(form.cleaned_data['target'])}")
+            # if we have all our values set the header
+
+            if login and password:
+
+                auth_str = str(login) + ":" + str(password)
+                auth_cookie = base64.urlsafe_b64encode(auth_str.encode("utf-8"))
+                response = HttpResponseRedirect(target)
+                response.set_cookie('nginxauth', auth_cookie.decode("utf-8"), httponly=True)
+                return response
+            else:
+                messages.add_message(request, messages.ERROR, 'Login and password must not be blank!')
+        return render(request, self.template_name, {'form': form})
+
+class LogoutView(View):
+    form_class = LoginForm
+
+    # initial = {'key': 'value'}
+    template_name = 'login.html'
+
+    def get(self, request, *args, **kwargs):
+        # try to get target location from header
+        target = self.request.META.get('HTTP_X_TARGET')
+        print("form get")
+        print(f"target from header: {target}")
+        if not target:
+            target = request.META.get('HTTP_REFERER')
+            print(f"target from referrer: {target}")
+        # if not target:
+        #     return HttpResponseForbidden()
+        # form = self.form_class(initial=self.initial)
+        form = self.form_class(initial={'target': target})
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            login = form.cleaned_data['login']
+            password = form.cleaned_data['password']
+            target = form.cleaned_data['target']
+            print(f"target from form: {target}")
+            if not target:
+                target = '/'
+            print(f"final target: {str(form.cleaned_data['target'])}")
+            # if we have all our values set the header
+
+            if login and password:
+
+                auth_cookie = base64.urlsafe_b64encode((str(login) + ":" + str(password)).encode("ascii"))
+                response = HttpResponseRedirect(target)
+                response.set_cookie('nginxauth', auth_cookie, httponly=True)
+                return response
+            else:
+                messages.add_message(request, messages.ERROR, 'Login and password must not be blank!')
+        return render(request, self.template_name, {'form': form})
+
+class AuthenticateView(View):
+    form_class = LoginForm
+
+    # initial = {'key': 'value'}
+    template_name = 'login.html'
+
+    def get(self, request, *args, **kwargs):
+        # get our header variables
+        realm = request.META.get('HTTP_X_LDAP_REALM', 'Restricted')
+        url = request.META.get('HTTP_X_LDAP_URL')
+        start_tls = request.META.get('HTTP_X_LDAP_STARTTLS', 'false')
+        disable_referrals = request.META.get('HTTP_X_LDAP_DISABLEREFERRALS', 'false')
+        base_dn = request.META.get('HTTP_X_LDAP_BASEDN')
+        template = request.META.get('HTTP_X_LDAP_TEMPLATE', '(cn=%(username)s)')
+        bind_dn = request.META.get('HTTP_X_LDAP_BINDDN', '')
+        bind_password = request.META.get('HTTP_X_LDAP_BINDPASS', '')
+        cookie_name = request.META.get('HTTP_X_LDAP_COOKIENAME', 'nginxauth')
+        target = self.request.META.get('HTTP_X_TARGET')
+        authn_header = self.request.META.get('HTTP_WWW_AUTHENTICATE')
+        auth_header = self.request.META.get('HTTP_AUTHORIZATION')
+        auth_cookie = self.request.COOKIES.get(cookie_name)
+
+        print(f"target from header: {target}")
+        if not target:
+            target = request.META.get('HTTP_REFERER')
+            print(f"target from referrer: {target}")
+
+        # if our authorization header is blank check if we have a cookie and if so set the authorization header
+        #   from cookie and continue to achieve auto-login
+        if not auth_header and auth_cookie:
+            auth_header = "Basic " + auth_cookie
+
+        # if we don't have auhorization header still then tell nginx to have the user login
+        if auth_header is None or not auth_header.lower().startswith('basic '):
+            print('no auth_header so telling nginx to authenticate...')
+            response = HttpResponse('Unauthorized', status=401)
+            response['Cache-Control'] = 'no-cache'
+            response['WWW-Authenticate'] = 'Basic realm="' + realm + '"'
+            response['X-Target'] = target
+            return response
+
+        # we have a auth header so lets try to authenticate using the stored credentials
+        #   NOTE: my have expired ect.  we need to add that next
+        #   TODO: add check for expired credentials and to try again (session timeout)
+        # get the username and password and attempt to authenticate
+        username = self.get_username(auth_header)
+        password = self.get_password(auth_header)
+        # NOTE: using django for now; change to ldap later
+        #   TODO: change to ldap?
+        user = authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            login(request, user)
+        else:
+            # give error message and re-authenticate to login to show error
+            if user is None:
+                msg = "User not found."
+            else:
+                msg = "User account has been de-activated."
+            messages.add_message(request, messages.ERROR, msg)
+            response = HttpResponse('Unauthorized', status=401)
+            response['Cache-Control'] = 'no-cache'
+            response['WWW-Authenticate'] = 'Basic realm="' + realm + '"'
+            response['X-Target'] = target
+            return response
+
+        # if we got this far we should have a logged in user; lets create a global header and redirect to target
+        response = HttpResponse()
+        response['X-Auth-Headers'] = 'sm_constitid:3074952'
+        return response
+
+    def get_username(self, auth_token):
+        trim_token = auth_token[6:]
+        btrim_token = trim_token.encode("utf-8")
+        bauth_str = base64.urlsafe_b64decode(btrim_token)
+        auth_str = bauth_str.decode("utf-8")
+        print('decoded trimmed token: ' + str(auth_str))
+        username, password = auth_str.split(':', 1)
+        return username
+
+    def get_password(self, auth_token):
+        # may split this but for now use urlsafe b64 encoding
+        trim_token = auth_token[6:]
+        btrim_token = trim_token.encode("utf-8")
+        bauth_str = base64.urlsafe_b64decode(btrim_token)
+        auth_str = bauth_str.decode("utf-8")
+        print('decoded trimmed token: ' + str(auth_str))
+        username, password = auth_str.split(':', 1)
+        return password
+
+
+# # HELPER API VIEWS  (move?)
 # redo this after we figure out about the requests requirement
 # class UrlValidationApi(View):
 #     def get(self, request):
