@@ -20,7 +20,7 @@ log = logging.getLogger("docroot.middleware")
 class DocrootFallbackMiddleware(object):
     def __init__(self, get_response):
         self.get_response = get_response
-        log.debug("DocrootFallbackMiddleware initialized...")
+        log.info("DocrootFallbackMiddleware initialized...")
         # todo: use this example and import to disable our middleware based on a settings entry
         # raise MiddlewareNotUsed('DISABLE_MIDDLEWARE is set')
 

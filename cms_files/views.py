@@ -225,8 +225,10 @@ class TemplateMeta:
             log.debug("opening file: " + self.file_name)
             fp = codecs.open(self.file_name, "r", encoding='utf-8')
             log.debug("loading template...")
-            # template = Template(fp.read(), Origin(url), template_name)
-            template = Template(fp.read().encode('utf-8'), Origin(self.file_name), self.template_name)
+            # template = Template(fp.read().encode('utf-8'), Origin(self.file_name), self.template_name)
+            # sas django 2.2 no longer reqiures bytes so we can go back to just reading it in
+            # if this has problems with utf-8 content then do a decode afterwards instead
+            template = Template(fp.read(), Origin(self.file_name), self.template_name)
             log.debug("closing file")
             fp.close()
 
@@ -344,6 +346,7 @@ class LoginFormView(View):
     def get(self, request, *args, **kwargs):
         # try to get target location from header
         target = self.request.META.get('HTTP_X_TARGET')
+        auth_message = self.request.META.get('HTTP_X_AUTH_MESSAGE')
         print(f"target from header: {target}")
         if not target:
             target = request.META.get('HTTP_REFERER')
@@ -352,7 +355,7 @@ class LoginFormView(View):
         #     return HttpResponseForbidden()
         # form = self.form_class(initial=self.initial)
         form = self.form_class(initial={'target': target})
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'auth_message': auth_message})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -457,7 +460,8 @@ class AuthenticateView(View):
             response = HttpResponse('Unauthorized', status=401)
             response['Cache-Control'] = 'no-cache'
             response['WWW-Authenticate'] = 'Basic realm="' + realm + '"'
-            response['X-Target'] = target
+            # response['X-Target'] = target
+            response['X-Auth-Message'] = "Please log in"
             return response
 
         # we have a auth header so lets try to authenticate using the stored credentials
@@ -474,19 +478,24 @@ class AuthenticateView(View):
         else:
             # give error message and re-authenticate to login to show error
             if user is None:
-                msg = "User not found."
+                msg = "Login or Password is incorrect."
             else:
-                msg = "User account has been de-activated."
+                msg = "Account has been de-activated."
             messages.add_message(request, messages.ERROR, msg)
             response = HttpResponse('Unauthorized', status=401)
             response['Cache-Control'] = 'no-cache'
             response['WWW-Authenticate'] = 'Basic realm="' + realm + '"'
-            response['X-Target'] = target
+            # response['X-Target'] = target
+            response['X-Auth-Message'] = msg
             return response
 
+        msg = "Authenticated"
+        # todo: add processing here to determine if the url is protected and we have rights (authorization)
+        # todo: add processing to determine what headers to pack in auth headers and send for this url (post authz)
         # if we got this far we should have a logged in user; lets create a global header and redirect to target
         response = HttpResponse()
         response['X-Auth-Headers'] = 'sm_constitid:3074952'
+        response['X-Auth-Message'] = msg
         return response
 
     def get_username(self, auth_token):

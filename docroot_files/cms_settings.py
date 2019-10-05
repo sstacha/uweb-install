@@ -12,7 +12,7 @@ DOCROOT_ROOT = os.path.join(BASE_DIR, "docroot/files/")
 
 # add our docroot application to the installed apps and middleware initializations
 MIDDLEWARE += (
-    'uweb.middleware.routes.DocrootFallbackMiddleware',
+    'uweb.middleware.DocrootFallbackMiddleware',
 )
 INSTALLED_APPS += (
     'docroot',
