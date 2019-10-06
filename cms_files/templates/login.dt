@@ -5,6 +5,9 @@
     {% endfor %}
 </ul>
 {% endif %}
+{% if auth_message %}
+    {{ auth_message }}
+{% endif %}
 
 <form action="/login" method="POST">{% csrf_token %}
     {{form.as_p}}
