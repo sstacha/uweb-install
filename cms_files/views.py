@@ -74,67 +74,11 @@ def page(request):
     # NOTE: only calls render_page if the template is found
     return meta.render()
 
-    # """
-    # We are going to try to look for a template a couple of ways based on the request; if nothing is found we return
-    # None
-    #  and things proceed like never called.  If found we return the response it should return instead
-    # """
-    # docroot_dir = getattr(settings, "DOCROOT_ROOT", "")
-    # log.debug("docroot dir: " + docroot_dir)
-    # path = request.path_info
-    # if path.startswith("/"):
-    #     path = path[1:]
-    # file=os.path.join(docroot_dir, path)
-    # log.debug("file: " + file)
-    # url = file
-    # module_name = path
-    # template_name = path
-    # template = None
-    # # if the url ends in .html then try to load a corresponding template from the docroot/files directory
-    # if url.endswith(".html"):
-    #     # our url will request .html but we want to look for a .dt file (required for template processing)
-    #     url = url[:-4]
-    #     url += "dt"
-    #     template_name = template_name[:-4]
-    #     template_name += "dt"
-    #     if os.path.isfile(url):
-    #         log.debug("found file: " + url)
-    #     else:
-    #         url = None
-    #
-    # elif url.endswith('/'):
-    #     url += "index.dt"
-    #     if os.path.isfile(url):
-    #         log.debug("found file: " + url)
-    #         module_name += "index.html"
-    #         template_name += "index.dt"
-    #     else:
-    #         url = None
-    #
-    # else:
-    #     url += ".dt"
-    #     if os.path.isfile(url):
-    #         log.debug("found file: " + url)
-    #         module_name += ".html"
-    #         template_name += ".dt"
-    #     else:
-    #         url = None
-    #
-    # if url:
-    #     log.debug("opening file: " + url)
-    #     # fp = open(url)
-    #     fp = codecs.open(url, "r", encoding='utf-8')
-    #     log.debug("loading template...")
-    #     # template = Template(fp.read(), Origin(url), template_name)
-    #     template = Template(fp.read().encode('utf-8'), Origin(url), template_name)
-    #     log.debug("closing file")
-    #     fp.close()
-    #
-    # if template:
-    #     log.debug("attempting to load context and render the template...")
-    #     return render_page(request, template, module_name)
-    # else:
-    #     return None
+# This view is called from DocrootFallbackMiddleware.process_response
+# when a 404 is raised. We do not need to use @csrf_protect since a web service should never contain input forms.
+def api(request):
+    meta = ApiMeta(request)
+    return meta.render()
 
 
 class TemplateMeta:
@@ -245,6 +189,119 @@ class TemplateMeta:
         return self.file_name
 
 
+class ApiMeta:
+    """
+        encapsulates the core atts and methods to get a valid api data file and process it
+    """
+
+    def __init__(self, request):
+        self.ALL_OPTIONS = ['GET','POST','PUT','TRACE','DELETE','HEAD','PATCH']
+        self.options = []
+        # setup our basic attributes for the meta-data we will use for validation and api creation
+        self.is_found = False
+        self.request = request
+        self.docroot_dir = getattr(settings, "DOCROOT_ROOT", "")
+        log.debug("docroot dir: " + self.docroot_dir)
+        self.original_path = request.path_info.strip()
+        self.path = self.original_path
+        if self.path.startswith("/"):
+            self.path = self.path[1:]
+        self.file_name = os.path.join(self.docroot_dir, self.path)
+        log.debug("file: " + str(self.file_name))
+        self.api_name = self.path
+        # try and modify urls for logic on how to pull the correct template
+        self.find_api()
+
+        if not settings.IGNORE_LANGUAGE_PREFIX:
+            # if not found lets try and make sure it is not because of language
+            if not self.is_found and request.LANGUAGE_CODE:
+                # new code to make us django language aware (strip language code when looking for a template)
+                # print('request lang: ' + str(request.LANGUAGE_CODE))
+                # print('settings lang: ' + str(settings.LANGUAGE_CODE))
+                # print('languages: ' + str(settings.LANGUAGES))
+                lang = '/' + request.LANGUAGE_CODE + "/"
+                if self.original_path.startswith(lang):
+                    self.path = self.original_path[len(lang):]
+                    self.file_name = os.path.join(self.docroot_dir, self.path)
+                    log.debug("language stripped file: " + str(self.file_name))
+                    self.api_name = self.path
+                    # re-try and modify urls for logic on how to pull the correct template
+                    self.find_api()
+
+            # finally if we still don't have a template and ends with / and APPEND_SLASH is set and False strip it
+            if not self.is_found and request.LANGUAGE_CODE and settings.APPEND_SLASH and self.original_path.endswith('/'):
+                lang = '/' + request.LANGUAGE_CODE + "/"
+                if self.original_path.startswith(lang):
+                    # same as above except now try to strip the last slash
+                    self.path = self.original_path[len(lang):len(self.original_path)-1]
+                    self.file_name = os.path.join(self.docroot_dir, self.path)
+                    log.debug("language stripped file: " + str(self.file_name))
+                    self.api_name = self.path
+                    # re-try and modify urls for logic on how to pull the correct template
+                    self.find_api()
+
+
+    # contains the logic for taking a request url and attempting to locate an api for it
+    def find_api(self):
+        # if the url ends in .html then try to load a corresponding template from the docroot/files directory
+        if self.file_name.endswith(".json"):
+            # our url will request .html but we want to look for a .dt file (required for template processing)
+            self.file_name = self.file_name[:-4]
+            self.file_name += "data.py"
+            if os.path.isfile(self.file_name):
+                log.debug("found file: " + self.file_name)
+                self.is_found = True
+
+    def render(self):
+        # return none if not found
+        if self.is_found:
+            # try to load a data file if it is there in order to get the context
+            # all data files should support get_context() or a context property
+            try:
+                log.debug("attempting to load data_file...")
+                spec = importlib.util.spec_from_file_location(self.api_name, self.file_name)
+                data = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(data)
+
+                # datafile = imp.load_source(module_name, datafile_name)
+                # note changing datafile below to data
+            except Exception as ex:
+                logging.error(str(ex))
+                return None
+            if data:
+                methods = dir(data)
+                for method in methods:
+                    if method in self.ALL_OPTIONS:
+                        self.options.append(method)
+                # figure out the proper method to call (get, post trace etc) return method not supported if not there
+                request_method = self.request.method
+                try:
+                    initmethod = getattr(data, request_method)
+                except AttributeError:
+                    initmethod = None
+                if initmethod:
+                    # we may want to return something like a redirect so if is response then return it; else use for
+                    # data!
+                    content = initmethod(self.request)
+                    if isinstance(content, HttpResponse):
+                        return content
+                    else:
+                        return HttpResponse(content)
+                else:
+                    log.error("Found datafile [" + self.file_name + "] but didn't find method [" + self.request.method + "]!")
+                    response = HttpResponse("Method Not Supported [" + self.request.method + "]!", status=405)
+                    response['Allow'] = ",".join(self.options)
+                    response['Content-Type'] = "application/json"
+                    return response
+
+    def is_found(self):
+        return self.is_found
+
+    def __str__(self):
+        return self.file_name
+
+
+
 @csrf_protect
 def render_page(request, template, module_name):
     """
@@ -280,7 +337,10 @@ def render_page(request, template, module_name):
         except AttributeError:
             initmethod = None
         if initmethod:
+            # we may want to return something like a redirect so if is response then return it; else use for data!
             context = initmethod(request)
+            if isinstance(context, HttpResponse):
+                return context
         else:
             try:
                 context = getattr(data, 'context')
@@ -341,7 +401,7 @@ class LoginFormView(View):
     form_class = LoginForm
 
     # initial = {'key': 'value'}
-    template_name = 'login.html'
+    template_name = 'login.dt'
 
     def get(self, request, *args, **kwargs):
         # try to get target location from header
@@ -384,7 +444,7 @@ class LogoutView(View):
     form_class = LoginForm
 
     # initial = {'key': 'value'}
-    template_name = 'login.html'
+    template_name = 'login.dt'
 
     def get(self, request, *args, **kwargs):
         # try to get target location from header
@@ -426,7 +486,7 @@ class AuthenticateView(View):
     form_class = LoginForm
 
     # initial = {'key': 'value'}
-    template_name = 'login.html'
+    template_name = 'login.dt'
 
     def get(self, request, *args, **kwargs):
         # get our header variables
@@ -456,6 +516,8 @@ class AuthenticateView(View):
 
         # if we don't have auhorization header still then tell nginx to have the user login
         if auth_header is None or not auth_header.lower().startswith('basic '):
+            # messages.info(request, "Please log in")
+            # request.session['SAS_LOGIN_MESSAGE'] = 'Please log in'
             print('no auth_header so telling nginx to authenticate...')
             response = HttpResponse('Unauthorized', status=401)
             response['Cache-Control'] = 'no-cache'
