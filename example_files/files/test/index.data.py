@@ -1,6 +1,7 @@
-# from myapp.models import Web_Region
 import re
 from django.conf import settings
+from django.http import JsonResponse
+from datetime import datetime
 
 context = {}
 
@@ -20,3 +21,9 @@ def get_context(request):
     real_ip = request.META.get('HTTP_X_REAL_IP')
     context.update({'headers': request_headers, 'request_ip': str(request_ip), 'real_ip': str(real_ip), 'b': b, 'b2': b2})
     return context
+
+def GET(request):
+    ctx = get_context(request)
+    now = datetime.now()
+    ctx['freshness_date'] = str(now)
+    return JsonResponse(ctx, safe=False)
