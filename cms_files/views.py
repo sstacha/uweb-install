@@ -581,6 +581,7 @@ class AuthenticateView(View):
 
 
 # # HELPER API VIEWS  (move?)
+# Idea is to use this for links enhancement in ckeditor (gives immediate feedback when creating a link)
 # redo this after we figure out about the requests requirement
 # class UrlValidationApi(View):
 #     def get(self, request):
