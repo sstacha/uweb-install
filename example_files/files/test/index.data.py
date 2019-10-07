@@ -1,5 +1,7 @@
 # from myapp.models import Web_Region
 import re
+from django.conf import settings
+
 context = {}
 
 def get_context(request):
@@ -12,7 +14,9 @@ def get_context(request):
         if regex_http_.match(header) or regex_content_type.match(header) or regex_content_length.match(header):
             request_headers[header] = request.META[header]
 
+    b = getattr(settings, "BOOGER", "")
+    b2 = getattr(settings, "BOOGER2", "")
     request_ip = request.META.get('REMOTE_ADDR')
     real_ip = request.META.get('HTTP_X_REAL_IP')
-    context.update({'headers': request_headers, 'request_ip': str(request_ip), 'real_ip': str(real_ip)})
+    context.update({'headers': request_headers, 'request_ip': str(request_ip), 'real_ip': str(real_ip), 'b': b, 'b2': b2})
     return context

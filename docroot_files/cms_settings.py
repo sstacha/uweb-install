@@ -87,14 +87,26 @@ else:
 if 'default' in DATABASES and 'ENGINE' in DATABASES['default'] and DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
     DATABASES['default']['NAME']=os.path.join(BASE_DIR, 'data', 'db.sqlite3')
 
+# OVERRIDE THE DEFAULT CACHE TO DISABLE TEMPLATE CACHING IN DEV
+if DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        },
+    }
+
 # SECURITY WARNING: keep the secret key used in production secret! (do not version .secret_key)
-# ----------- secret key handler
-# try:
-#     with open('.secret_key') as file:
-#         SECRET_KEY = file.read()
-# except FileNotFoundError:
-#     print('WARNING: .secret_key NOT FOUND DEFAULTING TO [%s] from config file' % str(SECRET_KEY))
-#     print('     it is recommended you run [./manage.py secret_key set] from the console!')
-#     print('')
+# 	NOTE: if you do use a UWEB_SECRET_KEY variable which will get replaced at runtime below
+
+# Replace any UWEB_ prefixed environment variables in settings at startup
+#   NOTE: used for docker/local machine environment variable loading overrides
+#	NOTE: expect strings not complex items like below
+this_module = sys.modules[__name__]
+for k, v in os.environ.items():
+    if k.startswith("UWEB_"):
+        attr_key = k[5:]
+        if attr_key:
+            # print (f"attempting to set {attr_key} to [{str(v)}]")
+            setattr(this_module, attr_key, v)
 
 # ------------------------ UWEB SETTINGS ------------------------------------

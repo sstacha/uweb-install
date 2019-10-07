@@ -286,7 +286,10 @@ class ApiMeta:
                     if isinstance(content, HttpResponse):
                         return content
                     else:
-                        return HttpResponse(content)
+                        response = HttpResponse(content)
+                        response['Allow'] = ",".join(self.options)
+                        response['Content-Type'] = "application/json"
+                        return response
                 else:
                     log.error("Found datafile [" + self.file_name + "] but didn't find method [" + self.request.method + "]!")
                     response = HttpResponse("Method Not Supported [" + self.request.method + "]!", status=405)

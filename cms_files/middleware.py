@@ -47,4 +47,11 @@ class DocrootFallbackMiddleware(object):
                     log.debug("result is not none so returning it...")
                     response = result
 
+            # attempt to load an api (determined by extension [.json, .xml etc])
+            if not result:
+                result = cms_views.api(request)
+                if result:
+                    log.debug("result is not none so returning it...")
+                    response = result
+
         return response
