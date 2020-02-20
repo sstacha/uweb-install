@@ -103,7 +103,11 @@ class TemplateMeta:
         # try and modify urls for logic on how to pull the correct template
         self.find_template()
 
-        if not settings.IGNORE_LANGUAGE_PREFIX:
+        # get our settings needed for processing defaulting if they are not there
+        ignore_lanaguage_prefix = getattr(settings, 'IGNORE_LANGUAGE_PREFIX', False)
+        append_slash = getattr(settings, 'APPEND_SLASH', False)
+
+        if not ignore_lanaguage_prefix:
             # if not found lets try and make sure it is not because of language
             if not self.is_found and request.LANGUAGE_CODE:
                 # new code to make us django language aware (strip language code when looking for a template)
@@ -121,7 +125,7 @@ class TemplateMeta:
                     self.find_template()
 
             # finally if we still don't have a template and ends with / and APPEND_SLASH is set and False strip it
-            if not self.is_found and request.LANGUAGE_CODE and settings.APPEND_SLASH and self.original_path.endswith('/'):
+            if not self.is_found and request.LANGUAGE_CODE and append_slash and self.original_path.endswith('/'):
                 lang = '/' + request.LANGUAGE_CODE + "/"
                 if self.original_path.startswith(lang):
                     # same as above except now try to strip the last slash
@@ -212,7 +216,11 @@ class ApiMeta:
         # try and modify urls for logic on how to pull the correct template
         self.find_api()
 
-        if not settings.IGNORE_LANGUAGE_PREFIX:
+        # get our settings needed for processing defaulting if they are not there
+        ignore_lanaguage_prefix = getattr(settings, 'IGNORE_LANGUAGE_PREFIX', False)
+        append_slash = getattr(settings, 'APPEND_SLASH', False)
+
+        if not ignore_lanaguage_prefix:
             # if not found lets try and make sure it is not because of language
             if not self.is_found and request.LANGUAGE_CODE:
                 # new code to make us django language aware (strip language code when looking for a template)
@@ -229,7 +237,7 @@ class ApiMeta:
                     self.find_api()
 
             # finally if we still don't have a template and ends with / and APPEND_SLASH is set and False strip it
-            if not self.is_found and request.LANGUAGE_CODE and settings.APPEND_SLASH and self.original_path.endswith('/'):
+            if not self.is_found and request.LANGUAGE_CODE and append_slash and self.original_path.endswith('/'):
                 lang = '/' + request.LANGUAGE_CODE + "/"
                 if self.original_path.startswith(lang):
                     # same as above except now try to strip the last slash
