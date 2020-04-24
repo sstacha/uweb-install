@@ -101,12 +101,12 @@ if DEBUG:
 # Replace any UWEB_ prefixed environment variables in settings at startup
 #   NOTE: used for docker/local machine environment variable loading overrides
 #	NOTE: expect strings not complex items like below
-this_module = sys.modules[__name__]
-for k, v in os.environ.items():
-    if k.startswith("UWEB_"):
-        attr_key = k[5:]
-        if attr_key:
-            # print (f"attempting to set {attr_key} to [{str(v)}]")
-            setattr(this_module, attr_key, v)
+#this_module = sys.modules[__name__]
+#for k, v in os.environ.items():
+#    if k.startswith("UWEB_"):
+#        attr_key = k[5:]
+#        if attr_key:
+#            # print (f"attempting to set {attr_key} to [{str(v)}]")
+#            setattr(this_module, attr_key, v)
 
 # ------------------------ UWEB SETTINGS ------------------------------------
