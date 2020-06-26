@@ -74,6 +74,7 @@ def page(request):
     # NOTE: only calls render_page if the template is found
     return meta.render()
 
+
 # This view is called from DocrootFallbackMiddleware.process_response
 # when a 404 is raised. We do not need to use @csrf_protect since a web service should never contain input forms.
 def api(request):
@@ -129,7 +130,7 @@ class TemplateMeta:
                 lang = '/' + request.LANGUAGE_CODE + "/"
                 if self.original_path.startswith(lang):
                     # same as above except now try to strip the last slash
-                    self.path = self.original_path[len(lang):len(self.original_path)-1]
+                    self.path = self.original_path[len(lang):len(self.original_path) - 1]
                     self.file_name = os.path.join(self.docroot_dir, self.path)
                     log.debug("language stripped file: " + str(self.file_name))
                     self.module_name = self.path
@@ -137,7 +138,6 @@ class TemplateMeta:
 
                     # re-try and modify urls for logic on how to pull the correct template
                     self.find_template()
-
 
     # contains the logic for taking a request url and attempting to locate a page template for it
     def find_template(self):
@@ -199,7 +199,7 @@ class ApiMeta:
     """
 
     def __init__(self, request):
-        self.ALL_OPTIONS = ['GET','POST','PUT','TRACE','DELETE','HEAD','PATCH']
+        self.ALL_OPTIONS = ['GET', 'POST', 'PUT', 'TRACE', 'DELETE', 'HEAD', 'PATCH']
         self.options = []
         # setup our basic attributes for the meta-data we will use for validation and api creation
         self.is_found = False
@@ -241,13 +241,12 @@ class ApiMeta:
                 lang = '/' + request.LANGUAGE_CODE + "/"
                 if self.original_path.startswith(lang):
                     # same as above except now try to strip the last slash
-                    self.path = self.original_path[len(lang):len(self.original_path)-1]
+                    self.path = self.original_path[len(lang):len(self.original_path) - 1]
                     self.file_name = os.path.join(self.docroot_dir, self.path)
                     log.debug("language stripped file: " + str(self.file_name))
                     self.api_name = self.path
                     # re-try and modify urls for logic on how to pull the correct template
                     self.find_api()
-
 
     # contains the logic for taking a request url and attempting to locate an api for it
     def find_api(self):
@@ -299,7 +298,8 @@ class ApiMeta:
                         response['Content-Type'] = "application/json"
                         return response
                 else:
-                    log.error("Found datafile [" + self.file_name + "] but didn't find method [" + self.request.method + "]!")
+                    log.error(
+                        "Found datafile [" + self.file_name + "] but didn't find method [" + self.request.method + "]!")
                     response = HttpResponse("Method Not Supported [" + self.request.method + "]!", status=405)
                     response['Allow'] = ",".join(self.options)
                     response['Content-Type'] = "application/json"
@@ -310,7 +310,6 @@ class ApiMeta:
 
     def __str__(self):
         return self.file_name
-
 
 
 @csrf_protect
@@ -339,9 +338,13 @@ def render_page(request, template, module_name):
 
         # datafile = imp.load_source(module_name, datafile_name)
         # note changing datafile below to data
-    except Exception:
+    except FileNotFoundError:
+        return None
+    except Exception as ex:
         # logging.error(traceback.format_exc())
         data = None
+        if settings.DEBUG:
+            raise ex
     if data:
         try:
             initmethod = getattr(data, 'get_context')
@@ -359,7 +362,7 @@ def render_page(request, template, module_name):
                 context = {}
     # print("context string: " + str(context))
     template_context = RequestContext(request)
-    if (context):
+    if context:
         template_context.push(context)
     response = HttpResponse(template.render(template_context))
     return response
@@ -406,6 +409,7 @@ class ContentApi(View):
         else:
             return HttpResponse(status=204)
 
+
 # # AUTHENTICATION VIEWS
 #
 class LoginFormView(View):
@@ -451,6 +455,7 @@ class LoginFormView(View):
                 messages.add_message(request, messages.ERROR, 'Login and password must not be blank!')
         return render(request, self.template_name, {'form': form})
 
+
 class LogoutView(View):
     form_class = LoginForm
 
@@ -492,6 +497,7 @@ class LogoutView(View):
             else:
                 messages.add_message(request, messages.ERROR, 'Login and password must not be blank!')
         return render(request, self.template_name, {'form': form})
+
 
 class AuthenticateView(View):
     form_class = LoginForm
@@ -589,7 +595,6 @@ class AuthenticateView(View):
         print('decoded trimmed token: ' + str(auth_str))
         username, password = auth_str.split(':', 1)
         return password
-
 
 # # HELPER API VIEWS  (move?)
 # Idea is to use this for links enhancement in ckeditor (gives immediate feedback when creating a link)
