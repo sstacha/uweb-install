@@ -18,7 +18,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    url(r'^content/$', views.ContentApi.as_view(), name='cms_content'),
+    path('content/', views.ContentApi.as_view(), name='cms_content'),
     path('login', views.LoginFormView.as_view(), name="cms_login"),
     path('logout', views.LogoutView.as_view(), name="cms_logout"),
     path('auth', views.AuthenticateView.as_view(), name="cms_authenticate"),
